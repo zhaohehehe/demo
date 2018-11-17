@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-fragment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:webfragment="http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd"
+	version="3.0">
+	<display-name>fragment-2</display-name>
+	<name>fragment-2</name>
+	<listener>
+		<listener-class>zhaohe.study.listener.Fragment2Listener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>Fragment2Filter</filter-name>
+		<filter-class>zhaohe.study.filter.Fragment2Filter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Fragment2Filter</filter-name>
+		<url-pattern>/filter</url-pattern>
+	</filter-mapping>
+	<ordering>
+		<after>
+			<name>fragment-3</name>
+		</after>
+	</ordering>
+</web-fragment>
