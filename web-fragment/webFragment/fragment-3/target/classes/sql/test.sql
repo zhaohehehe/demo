@@ -1,1 +1,0 @@
--- fragment-3-sql
