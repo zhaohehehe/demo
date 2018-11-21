@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zhaohe.study.mapper.WelcomeDataMapper">
+	<select id="queryTableCount" resultType="java.lang.Integer">
+		select COUNT(0) from
+		common_object_current c where c.MODEL_ID='m6';
+	</select>
+	<select id="queryViewCount" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM
+		bdam_entity_view_asset;
+	</select>
+</mapper>
