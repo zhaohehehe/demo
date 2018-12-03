@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.sf.json.JSONArray;
-import zhaohe.study.controller.service.WelcomeDataService;
+import zhaohe.study.service.WelcomeDataService;
 
 
 @Controller
