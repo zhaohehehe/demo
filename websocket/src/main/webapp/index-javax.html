@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div><button id = "start">开始连接</button></div>
+	<div><button id = "stop">断开连接</button></div>
+	<div><textarea id="message">Here is a message!</textarea></div>
+	<div id="console-container">
+        <div id="console"/>
+    </div>
+</body>
+<script type="text/javascript" src="./websocket/js/common/jquery.min.js"></script>
+<script type="text/javascript" src="./websocket/js/javax/echo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#start").click(function(){
+        	alert("start");
+        	connect($("#message"));
+        });
+        $("#stop").click(function(){
+        	alert("stop");
+        	disconnect($("#message"));
+        });
+    });
+</script>
+
+</html>

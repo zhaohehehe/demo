@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>web</display-name>
+	<welcome-file-list>
+		<welcome-file>index-org.html</welcome-file>
+	</welcome-file-list>
+	<context-param>
+		<param-name>socketPort</param-name>
+		<param-value>8888</param-value>
+	</context-param>
+	<context-param>
+		<param-name>socketIp</param-name>
+		<param-value>172.16.124.25</param-value>
+	</context-param>
+	<!-- <filter>
+		<filter-name>testFilter</filter-name>
+		<filter-class>com.zhaohe.demo.websocket.test.FilterAbstract</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>testFilter</filter-name>
+		<url-pattern>/generateData</url-pattern>
+	</filter-mapping> -->
+	<!-- <listener><listener-class></listener-class></listener> -->
+	<!-- <servlet> <servlet-name>startClient</servlet-name> <servlet-class>com.zhaohe.demo.websocket.deprecated.ChatClientServlet</servlet-class> 
+		</servlet> <servlet> <servlet-name>startServer</servlet-name> <servlet-class>com.zhaohe.demo.websocket.deprecated.ChatServerServlet</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>startClient</servlet-name> <url-pattern>/websocket/startClient</url-pattern> 
+		</servlet-mapping> <servlet-mapping> <servlet-name>startServer</servlet-name> 
+		<url-pattern>/websocket/startServer</url-pattern> </servlet-mapping> -->
+</web-app>

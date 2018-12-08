@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	
+	
+	
+	
+	<div><button id = "server">server</button></div>
+	<!-- <div><button id = "client">client</button></div> -->
+	<!-- <a href = "/websocket/startServer">/startServer</a> -->
+	<div><textarea id="message">Here is a message!</textarea></div>
+	<div id="console-container">
+        <div id="console"/>
+    </div>
+	
+</body>
+<script type="text/javascript" src="./websocket/js/common/jquery.min.js"></script>
+<script type="text/javascript" src="./websocket/js/org/echo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#server").click(function(){
+        	alert("server");
+        	$.ajax({
+        		url:"startServer",
+        		type:"post",
+        		data:"",
+        		contentType: "application/json; charset=utf-8",
+        		success:function(result){
+        			
+        		}
+        	});
+        	var s = connect($("#message"));
+        	alert(s);
+        });
+    });
+</script>
+
+</html>
