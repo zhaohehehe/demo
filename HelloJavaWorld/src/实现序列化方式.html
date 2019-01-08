@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<h1>目录</h1>
+			<ol>
+				<li><h3><a href="#C1"><cite>方式一：实现Serializable接口（自动）</cite></a></h3></li>
+				<li><h3><a href="#C2"><cite>方式二：实现Serializable接口,同时添加方法签名（半自动半自定义）</cite></a></h3></li>
+				<li><h3><a href="#C3"><cite>方式三：实现Externalizable接口,继承自Serializable接口（全自定义）</cite></a></h3></li>
+			</ol>
+		</div>
+		<h2 id="C1">方式一：实现Serializable接口（自动）</h2>
+		<h2 id="C2">方式二：实现Serializable接口,同时添加方法签名（半自动半自定义）。</h2>
+		<ol>
+			<li><strong style='color: blue'>例如：</strong> <pre
+					class="prettyprint">
+class Person implements Serializable{
+	int age;
+	transient String name;
+	double height;
+	public Person(int age,String name,double height){
+		this.age=age;
+		this.name=name;
+		this.height=height;
+	}
+	/**
+	 * 注意：用户精确指定，则不会默认调用
+	 * @param out
+	 * @throws IOException
+	 */
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+		System.out.println("自定义 writeObject");
+		out.writeInt(age);
+		out.writeUTF(name);
+		out.writeDouble(height);
+	}
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+		System.out.println("自定义 readObject");
+		in.readInt();
+		in.readUTF();
+		in.readDouble();
+	}	
+}
+//序列化/反序列化过程
+public static void main(String[] args) throws Exception {
+		String strPath = "./../person.txt";
+		Person p1 = new Person(21, "abc", 1.57);
+		Person p2 = new Person(22, "def", 1.58);
+		Person p3 = new Person(23, "ghi", 1.59);
+		//序列化
+		FileOutputStream fos = new FileOutputStream(strPath);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(p1);
+		oos.writeObject(p2);
+		oos.writeObject(p3);
+		oos.close();
+		fos.close();
+		//反序列化
+		FileInputStream fis = new FileInputStream(strPath);
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		Person p = null;
+		for (int i = 0; i &lt; 3; i++) {
+			p = (Person) ois.readObject();
+			System.out.println("age=" + p.age + " name=" + p.name + " height=" + p.height);
+		}
+		ois.close();
+		fis.close();
+	}
+		</pre></li>
+			<li><strong style='color: blue'>例如：</strong>
+			<pre class='prettyprint'>
+class Person02 implements Serializable {
+	private String name;
+	private int age;
+
+	public Person02(String name, int age) {
+		super();
+		this.name = name;
+		this.age = age;
+	}
+
+	// 反序列化机制在恢复Java对象时无需调用构造器来初始化JAVA对象.对于单例类、枚举在实现序列化时都应该提供readResolve()方法，这样才能保证反序列的对象依然正常。
+	// 建议：对于final类重写readResolve()不会有任何问题，否则，重写readResolve方法时应尽量使用private修饰
+	// 保护性复制,在readObject之后调用
+	private Object readResolve() {
+		System.out.println("readResolve()方法");
+		return age;
+		// TODO Auto-generated method stub
+
+	}
+
+	// 程序在序列化对象之前先调用该方法
+	private Object writeReplace() {
+		System.out.println("writeReplace()方法");
+		ArrayList&lt;Object> list = new ArrayList&lt;>();
+		list.add(name);
+		list.add(age);
+		// 实际序列化的是List，反序列化得到的也是List
+		return list;
+
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeObject(new StringBuffer(name).reverse());
+		out.writeInt(age);
+
+	}
+
+	private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+		this.name = ((StringBuffer) in.readObject()).reverse().toString();
+		this.age = in.readInt();
+
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+}
+public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("a.txt"));
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream("a.txt"));) {
+			Person02 person = new Person02("zhaohe", 100);
+			oos.writeObject(person);
+			// 测试序列化
+			@SuppressWarnings("rawtypes")
+			ArrayList list = (ArrayList) ois.readObject();
+			System.out.println(list);
+
+			// 测试反序列化，注释掉writeReplace()方法，使得实际序列化的是Person02,又因为readResolve()方法返回的是age成员变量，所以反序列化的也是age成员变量
+			// int age = (int) ois.readObject();
+			// System.out.println(age);
+		}
+	}
+		
+		</pre></li>
+		</ol>
+		<h2 id="C3">方式三：实现Externalizable接口,继承自Serializable接口（全自定义）。</h2>
+		<ol>
+			<li><strong style='color: blue'>例如：</strong>
+			<pre class="prettyprint">
+class Person03 implements Externalizable {
+	private String name;
+	private int age;
+	/*
+	 * 实现Externalizable接口必须显示指定无参构造方法
+	 */
+	public Person03(){}
+	public Person03(String name, int age) {
+		super();
+		this.name = name;
+		this.age = age;
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeObject(new StringBuffer(name).reverse());
+		out.writeInt(age);
+
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		this.name = ((StringBuffer) in.readObject()).reverse().toString();
+		this.age = in.readInt();
+
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+}
+public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("a.txt"));
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream("a.txt"));) {
+			Person03 person = new Person03("zhaohe", 100);
+			oos.writeObject(person);
+			Person03 obj = (Person03) ois.readObject();
+			System.out.println(obj.getAge()+" "+obj.getName());
+		}
+	}
+		</pre></li>
+		</ol>
+	</div>
+</body>
+</html>

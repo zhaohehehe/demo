@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>java动态代理中的invoke方法是如何被自动调用的</title>
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=oBOAZKBV0iOYAAfiBMF7I3QYH6j3ORs86GVu3phnbcY1"/>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<p>java动态代理中的invoke方法是如何被自动调用的</p>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p align="left">转载：<a href="http://www.shangxueba.com/jingyan/1853835.html">http://www.shangxueba.com/jingyan/1853835.html</a></p>
+<p align="left">&nbsp;</p>
+<p align="left">一、动态代理与静态代理的区别。（1）Proxy类的代码被固定下来，不会因为业务的逐渐庞大而庞大；（2）可以实现AOP编程，这是静态代理无法实现的；（3）解耦，如果用在web业务下，可以实现数据层和业务层的分离。（4）动态代理的优势就是实现无侵入式的代码扩展。 静态代理这个模式本身有个大问题，如果类方法数量越来越多的时候，代理类的代码量是十分庞大的。所以引入动态代理来解决此类问题</p>
+<p align="left">&nbsp; &nbsp; 二、动态代理</p>
+<p align="left">&nbsp; &nbsp; Java中动态代理的实现，关键就是这两个东西：Proxy、InvocationHandler，下面从InvocationHandler接口中的invoke方法入手，简单说明一下Java如何实现动态代理的。</p>
+<p align="left">&nbsp; &nbsp; 首先，invoke方法的完整形式如下：</p>
+<p align="left">Java代码</p>
+<ol>
+<li>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable</li>
+<li>{</li>
+<li>&nbsp;</li>
+<li>method.invoke(obj, args);</li>
+<li>&nbsp;</li>
+<li>return null;</li>
+<li>}</li>
+</ol>
+<p align="left">&nbsp; &nbsp; 首先猜测一下，method是调用的方法，即需要执行的方法；args是方法的参数；proxy，这个参数是什么？以上invoke()方法的实现即是比较标准的形式，我们看到，这里并没有用到proxy参数。查看JDK文档中Proxy的说明，如下：</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>A method invocation on a proxy instance through one of its proxy interfaces will be dispatched to the invoke method of the instance's invocation handler, passing the proxy instance,a java.lang.reflect.Method object identifying the method that was invoked, and an array of type Object containing the arguments.</li>
+</ol>
+<p align="left">&nbsp; &nbsp; 由此可以知道以上的猜测是正确的，同时也知道，proxy参数传递的即是代理类的实例。</p>
+<p align="left">&nbsp; &nbsp; 为了方便说明，这里写一个简单的例子来实现动态代理。</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>//抽象角色（动态代理只能代理接口）</li>
+<li>public interface Subject {</li>
+<li>&nbsp;</li>
+<li>public void request();</li>
+<li>}</li>
+</ol>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>//真实角色：实现了Subject的request()方法</li>
+<li>public class RealSubject implements Subject{</li>
+<li>&nbsp;</li>
+<li>public void request(){</li>
+<li>System.out.println("From real subject.");</li>
+<li>}</li>
+<li>}</li>
+</ol>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>//实现了InvocationHandler</li>
+<li>public class DynamicSubject implements InvocationHandler</li>
+<li>{</li>
+<li>private Object obj;//这是动态代理的好处，被封装的对象是Object类型，接受任意类型的对象</li>
+<li>&nbsp;</li>
+<li>public DynamicSubject()</li>
+<li>{</li>
+<li>}</li>
+<li>&nbsp;</li>
+</ol>
+<p align="left">10. public DynamicSubject(Object obj)</p>
+<p align="left">11. {</p>
+<p align="left">12. this.obj = obj;</p>
+<p align="left">13. }</p>
+<ol>
+<li>14. &nbsp;</li>
+</ol>
+<p align="left">15. //这个方法不是我们显示的去调用</p>
+<p align="left">16. public Object invoke(Object proxy, Method method, Object[] args) throws Throwable</p>
+<p align="left">17. {</p>
+<p align="left">18. System.out.println("before calling " + method);</p>
+<ol>
+<li>19. &nbsp;</li>
+</ol>
+<p align="left">20. method.invoke(obj, args);</p>
+<ol>
+<li>21. &nbsp;</li>
+</ol>
+<p align="left">22. System.out.println("after calling " + method);</p>
+<ol>
+<li>23. &nbsp;</li>
+</ol>
+<p align="left">24. return null;</p>
+<p align="left">25. }</p>
+<ol>
+<li>26. &nbsp;</li>
+</ol>
+<p align="left">27. }</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>//客户端：生成代理实例，并调用了request()方法</li>
+<li>public class Client {</li>
+<li>&nbsp;</li>
+<li>public static void main(String[] args) throws Throwable{</li>
+<li>// TODO Auto-generated method stub</li>
+<li>&nbsp;</li>
+<li>Subject rs=new RealSubject();//这里指定被代理类</li>
+<li>InvocationHandler ds=new DynamicSubject(rs);</li>
+<li>Classcls=rs.getClass();</li>
+<li>10. &nbsp;</li>
+</ol>
+<p align="left">11. //以下是一次性生成代理</p>
+<ol>
+<li>12. &nbsp;</li>
+</ol>
+<p align="left">13. Subject subject=(Subject) Proxy.newProxyInstance(</p>
+<p align="left">14. cls.getClassLoader(),cls.getInterfaces(), ds);</p>
+<ol>
+<li>15. &nbsp;</li>
+</ol>
+<p align="left">16. //这里可以通过运行结果证明subject是Proxy的一个实例，这个实例实现了Subject接口</p>
+<p align="left">17. System.out.println(subject instanceof Proxy);</p>
+<ol>
+<li>18. &nbsp;</li>
+</ol>
+<p align="left">19. //这里可以看出subject的Class类是$Proxy0,这个$Proxy0类继承了Proxy，实现了Subject接口</p>
+<p align="left">20. System.out.println("subject的Class类是："+subject.getClass().toString());</p>
+<ol>
+<li>21. &nbsp;</li>
+</ol>
+<p align="left">22. System.out.print("subject中的属性有：");</p>
+<ol>
+<li>23. &nbsp;</li>
+</ol>
+<p align="left">24. Field[] field=subject.getClass().getDeclaredFields();</p>
+<p align="left">25. for(Field f:field){</p>
+<p align="left">26. System.out.print(f.getName()+", ");</p>
+<p align="left">27. }</p>
+<ol>
+<li>28. &nbsp;</li>
+</ol>
+<p align="left">29. System.out.print("\n"+"subject中的方法有：");</p>
+<ol>
+<li>30. &nbsp;</li>
+</ol>
+<p align="left">31. Method[] method=subject.getClass().getDeclaredMethods();</p>
+<ol>
+<li>32. &nbsp;</li>
+</ol>
+<p align="left">33. for(Method m:method){</p>
+<p align="left">34. System.out.print(m.getName()+", ");</p>
+<p align="left">35. }</p>
+<ol>
+<li>36. &nbsp;</li>
+</ol>
+<p align="left">37. System.out.println("\n"+"subject的父类是："+subject.getClass().getSuperclass());</p>
+<ol>
+<li>38. &nbsp;</li>
+</ol>
+<p align="left">39. System.out.print("\n"+"subject实现的接口是：");</p>
+<ol>
+<li>40. &nbsp;</li>
+</ol>
+<p align="left">41. Class[] interfaces=subject.getClass().getInterfaces();</p>
+<ol>
+<li>42. &nbsp;</li>
+</ol>
+<p align="left">43. for(Classi:interfaces){</p>
+<p align="left">44. System.out.print(i.getName()+", ");</p>
+<p align="left">45. }</p>
+<ol>
+<li>46. &nbsp;</li>
+</ol>
+<p align="left">47. System.out.println("\n\n"+"运行结果为：");</p>
+<p align="left">48. subject.request();</p>
+<p align="left">49. }</p>
+<p align="left">50. }</p>
+<p align="left">&nbsp; &nbsp; Xml代码</p>
+<ol>
+<li>运行结果如下：此处省略了包名，***代替</li>
+<li>true</li>
+<li>subject的Class类是：class $Proxy0</li>
+<li>subject中的属性有：m1, m3, m0, m2,</li>
+<li>subject中的方法有：request, hashCode, equals, toString,</li>
+<li>subject的父类是：class java.lang.reflect.Proxy</li>
+<li>subject实现的接口是：cn.edu.ustc.dynamicproxy.Subject,</li>
+<li>&nbsp;</li>
+<li>运行结果为：</li>
+</ol>
+<p align="left">10. before calling public abstract void ***.Subject.request()</p>
+<p align="left">11. From real subject.</p>
+<p align="left">12. after calling public abstract void ***.Subject.request()</p>
+<p align="left">&nbsp; &nbsp; PS：这个结果的信息非常重要，至少对我来说。因为我在动态代理犯晕的根源就在于将上面的subject.request()理解错了，至少是被表面所迷惑，没有发现这个subject和Proxy之间的联系，一度纠结于最后调用的这个request()是怎么和invoke()联系上的，而invoke又是怎么知道request存在的。其实上面的true和class $Proxy0就能解决很多的疑问，再加上下面将要说的$Proxy0的源码，完全可以解决动态代理的疑惑了。</p>
+<p align="left">&nbsp; &nbsp; 从以上代码和结果可以看出，我们并没有显示的调用invoke()方法，但是这个方法确实执行了。下面就整个的过程进行分析一下：</p>
+<p align="left">&nbsp; &nbsp; 从Client中的代码看，可以从newProxyInstance这个方法作为突破口，我们先来看一下Proxy类中newProxyInstance方法的源代码：</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>public static Object newProxyInstance(ClassLoader loader,</li>
+<li>Class[] interfaces,</li>
+<li>InvocationHandler h)</li>
+<li>throws IllegalArgumentException</li>
+<li>{</li>
+<li>if (h == null) {</li>
+<li>throw new NullPointerException();</li>
+<li>}</li>
+<li>&nbsp;</li>
+</ol>
+<p align="left">10. /*</p>
+<p align="left">11. * Look up or generate the designated proxy class.</p>
+<p align="left">12. */</p>
+<p align="left">13. Class cl = getProxyClass(loader, interfaces);</p>
+<ol>
+<li>14. &nbsp;</li>
+</ol>
+<p align="left">15. /*</p>
+<p align="left">16. * Invoke its constructor with the designated invocation handler.</p>
+<p align="left">17. */</p>
+<p align="left">18. try {</p>
+<p align="left">19. /*</p>
+<p align="left">20. * Proxy源码开始有这样的定义：</p>
+<p align="left">21. * private final static Class[] constructorParams = { InvocationHandler.class };</p>
+<p align="left">22. * cons即是形参为InvocationHandler类型的构造方法</p>
+<p align="left">23. */</p>
+<p align="left">24. Constructor cons = cl.getConstructor(constructorParams);</p>
+<p align="left">25. return (Object) cons.newInstance(new Object[] { h });</p>
+<p align="left">26. } catch (NoSuchMethodException e) {</p>
+<p align="left">27. throw new InternalError(e.toString());</p>
+<p align="left">28. } catch (IllegalAccessException e) {</p>
+<p align="left">29. throw new InternalError(e.toString());</p>
+<p align="left">30. } catch (InstantiationException e) {</p>
+<p align="left">31. throw new InternalError(e.toString());</p>
+<p align="left">32. } catch (InvocationTargetException e) {</p>
+<p align="left">33. throw new InternalError(e.toString());</p>
+<p align="left">34. }</p>
+<p align="left">35. }</p>
+<p align="left">&nbsp; &nbsp; Proxy.newProxyInstance(ClassLoader loader, Class[] interfaces, InvocationHandler h)做了以下几件事.</p>
+<p align="left">&nbsp; &nbsp; （1）根据参数loader和interfaces调用方法 getProxyClass(loader, interfaces)创建代理类$Proxy0.$Proxy0类 实现了interfaces的接口,并继承了Proxy类.</p>
+<p align="left">&nbsp; &nbsp; （2）实例化$Proxy0并在构造方法中把DynamicSubject传过去,接着$Proxy0调用父类Proxy的构造器,为h赋值,如下：</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>class Proxy{</li>
+<li>InvocationHandler h=null;</li>
+<li>protected Proxy(InvocationHandler h) {</li>
+<li>this.h = h;</li>
+<li>}</li>
+<li>...</li>
+<li>}</li>
+</ol>
+<p align="left">&nbsp; &nbsp; 来看一下这个继承了Proxy的$Proxy0的源代码：</p>
+<p align="left">&nbsp; &nbsp; Java代码</p>
+<ol>
+<li>public final class $Proxy0 extends Proxy implements Subject {</li>
+<li>private static Method m1;</li>
+<li>private static Method m0;</li>
+<li>private static Method m3;</li>
+<li>private static Method m2;</li>
+<li>&nbsp;</li>
+<li>static {</li>
+<li>try {</li>
+<li>m1 = Class.forName("java.lang.Object").getMethod("equals",</li>
+</ol>
+<p align="left">10. new Class[] { Class.forName("java.lang.Object") });</p>
+<ol>
+<li>11. &nbsp;</li>
+</ol>
+<p align="left">12. m0 = Class.forName("java.lang.Object").getMethod("hashCode",</p>
+<p align="left">13. new Class[0]);</p>
+<ol>
+<li>14. &nbsp;</li>
+</ol>
+<p align="left">15. m3 = Class.forName("***.RealSubject").getMethod("request",</p>
+<p align="left">16. new Class[0]);</p>
+<ol>
+<li>17. &nbsp;</li>
+</ol>
+<p align="left">18. m2 = Class.forName("java.lang.Object").getMethod("toString",</p>
+<p align="left">19. new Class[0]);</p>
+<ol>
+<li>20. &nbsp;</li>
+</ol>
+<p align="left">21. } catch (NoSuchMethodException nosuchmethodexception) {</p>
+<p align="left">22. throw new NoSuchMethodError(nosuchmethodexception.getMessage());</p>
+<p align="left">23. } catch (ClassNotFoundException classnotfoundexception) {</p>
+<p align="left">24. throw new NoClassDefFoundError(classnotfoundexception.getMessage());</p>
+<p align="left">25. }</p>
+<p align="left">26. } //static</p>
+<ol>
+<li>27. &nbsp;</li>
+</ol>
+<p align="left">28. public $Proxy0(InvocationHandler invocationhandler) {</p>
+<p align="left">29. super(invocationhandler);</p>
+<p align="left">30. }</p>
+<ol>
+<li>31. &nbsp;</li>
+</ol>
+<p align="left">32. @Override</p>
+<p align="left">33. public final boolean equals(Object obj) {</p>
+<p align="left">34. try {</p>
+<p align="left">35. return ((Boolean) super.h.invoke(this, m1, new Object[] { obj })) .booleanValue();</p>
+<p align="left">36. } catch (Throwable throwable) {</p>
+<p align="left">37. throw new UndeclaredThrowableException(throwable);</p>
+<p align="left">38. }</p>
+<p align="left">39. }</p>
+<ol>
+<li>40. &nbsp;</li>
+</ol>
+<p align="left">41. @Override</p>
+<p align="left">42. public final int hashCode() {</p>
+<p align="left">43. try {</p>
+<p align="left">44. return ((Integer) super.h.invoke(this, m0, null)).intValue();</p>
+<p align="left">45. } catch (Throwable throwable) {</p>
+<p align="left">46. throw new UndeclaredThrowableException(throwable);</p>
+<p align="left">47. }</p>
+<p align="left">48. }</p>
+<ol>
+<li>49. &nbsp;</li>
+</ol>
+<p align="left">50. public final void request() {</p>
+<p align="left">51. try {</p>
+<p align="left">52. super.h.invoke(this, m3, null);</p>
+<p align="left">53. return;</p>
+<p align="left">54. } catch (Error e) {</p>
+<p align="left">55. } catch (Throwable throwable) {</p>
+<p align="left">56. throw new UndeclaredThrowableException(throwable);</p>
+<p align="left">57. }</p>
+<p align="left">58. }</p>
+<ol>
+<li>59. &nbsp;</li>
+</ol>
+<p align="left">60. @Override</p>
+<p align="left">61. public final String toString() {</p>
+<p align="left">62. try {</p>
+<p align="left">63. return (String) super.h.invoke(this, m2, null);</p>
+<p align="left">64. } catch (Throwable throwable) {</p>
+<p align="left">65. throw new UndeclaredThrowableException(throwable);</p>
+<p align="left">66. }</p>
+<p align="left">67. }</p>
+<p align="left">68. }</p>
+<p align="left">&nbsp; &nbsp; 接着把得到的$Proxy0实例强制转换成Subject，并将引用赋给subject。当执行subject.request()方法时，就调用了$Proxy0类中的request()方法，进而调用父类Proxy中的h的invoke()方法.即InvocationHandler.invoke()。</p>
+<p align="left">&nbsp; &nbsp; PS：1、需要说明的一点是，Proxy类中getProxyClass方法返回的是Proxy的Class类。之所以说明，是因为我一开始犯了个低级错误，以为返回的是&ldquo;被代理类的Class类&rdquo;- -！推荐看一下getProxyClass的源码，很长=。=</p>
+<p align="left">&nbsp; &nbsp; 2、从$Proxy0的源码可以看出，动态代理类不仅代理了显示定义的接口中的方法，而且还代理了java的根类Object中的继承而来的equals()、hashcode()、toString()这三个方法，并且仅此三个方法。</p>
+<p align="left">&nbsp; &nbsp; Q：到现在为止，还有一个疑问，invoke方法中的第一个参数是Proxy的实例（准确说，最终用到的是$Proxy0的实例），但是有什么用呢？或者说，程序内是怎样显示出作用的？</p>
+<p align="left">&nbsp; &nbsp; A：就本人目前的水平看来，这个proxy参数并没有什么作用，在整个动态代理机制中，并没有用到InvocationHandler中invoke方法的proxy参数。而传入的这个参数实际是代理类的一个实例。我想可能是为了让程序员在invoke方法中使用反射来获取关于代理类的一些信息吧。</p>
+<p>&nbsp;</p></div>
+
+
+
+		</div>
+		
+	
+</div><!--end: topics 文章、评论容器-->
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	</div><!--end: main -->
+</div><!--end: home 自定义的最大容器 -->
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h3>首先确定链表结构是否可以改变,如果可以改变,可以先反转链表再打印;如果不可以改变链表结构,可以调用显示调用栈或者使用递归(隐式调用栈)</h3>
+		<pre class='prettyprint'>
+		1.先反转链表（新建链表），然后打印:
+		ListNode* reverse(ListNode* pHead){
+			ListNode* pRevrerseHead = NULL;
+			ListNode* pPrev = NULL;
+			ListNode* pNode = pHead;
+			while(pNode != NULL){
+				ListNode* pNext = pNode->next;
+				if(pNext == NULL){
+					pRevrerseHead=pNext;
+				}
+				pNode->next=pPrev;
+				pPrev=pNode;
+				pNode=pNext;
+			}
+			return pRevrerseHead;
+		}
+		或者就地反转：
+		dummy->1->2->3->4
+		dummy->2->1->3->4
+		dummy->3->2->1->4
+		cur指向2，prev指向1;
+		prev->next = cur->next;
+		cur->next = dummy->next;
+		dummy->next = cur;
+		cur=prev->next;
+		2.调用显示调用栈；
+		3.使用递归调用栈（链表节点过多的情况下，递归栈的层级会很深，可能会栈溢出）；
+		</pre>
+		
+	</div>
+</body>
+</html>

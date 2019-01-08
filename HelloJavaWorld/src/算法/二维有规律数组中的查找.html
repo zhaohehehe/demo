@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h3>1.例如给定一个二维数组按行递增、按列也递增，并给定一个数，如果该数字在二维数组里面，输出true，否则false.</h3>
+		<pre class='prettyprint'>
+例如：
+1  2  8  9
+2  4  9  12
+4  7  10  13
+6  8  11  15
+每一次选取右上或者左下的数字进行比较，每次比较就会缩小一行或者一列:
+
+public static boolean find(int[][] matrix,int row,int column,int target){
+		if(matrix!=null && matrix.length>0 && matrix[0].length>0){
+			while(row>=0 && column >=0){
+				if(matrix[row][column]==target){
+					return true;
+				}else if(matrix[row][column]>target){
+					column--;
+				}else{
+					row++;
+				}
+			}
+		}
+		return false;
+	}
+	public static void main(String[] args) {
+		//以右上角为例
+		int row=0;
+		int column = 3;
+		int[][] metrix = new int[][]{{1,2,8,9},{2,4,9,12},{4,7,10,13},{6,8,11,15}};
+		System.out.println(Test.find(metrix, row, column, 5));
+	}
+		</pre>
+		
+	</div>
+</body>
+</html>

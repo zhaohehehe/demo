@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>swing常用组件</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">JOptionPane</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-6">
+					<pre  class="pre-scrollable">
+public static void main(String[] args) {
+	// TODO Auto-generated method stub
+	String str=JOptionPane.showInputDialog("请输入N的值（输入exit退出）：");
+	int N=Integer.parseInt(str);
+	str=(N>90?"A":(N>60?"B":"C"));
+	System.out.println(str);
+}					
+					</pre>
+					</div>
+					<div class="col-sm-6">
+					<pre class="pre-scrollable">
+
+					</pre>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"></h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+					<li class="list-group-item"></li>
+					<li class="list-group-item"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

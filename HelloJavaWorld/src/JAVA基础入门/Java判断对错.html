@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<ol>
+			<li>(&#10008;) int[][] a=new int[][3];</li>
+			<li>(&#10004;) int[][] a=new int[][]{{1,2},{1,3,1},{1,3,4,6}};</li>
+			<li>(&#10008; 接口不能实例化) interface I{} class A implements I{} I[] i=new I[3]; i[0]=new I();</li>
+			<li>(&#10004;) interface I{} class A implements I{} I[] i=new I[3]; i[0]=new A();</li>
+			<li>(&#10004;) interface I{} class A implements I{} I[] j=new I[]{new A(),new A(),new A()};</li>
+			<li>Student[] students=new Student[10];System.out.println(students[0]);//null，此时还没有分配空间;</li>
+			<li><pre>
+List list=Arrays.asList("12","23");list.forEach(obj->{System.out.println(obj+",");});
+list.add("45");//报错 java.lang.UnsupportedOperationException，<span style='color:red'>定常List不会扩容</span></pre> 
+			</li>
+			<li>
+			<pre>
+		ArrayList&lt;Integer> al=new ArrayList&lt;Integer>();
+		al.add(new Integer(2));
+		al.add(new Integer(2));
+		al.add(new Integer(3));
+			</pre>
+			<p>(&#10008;)Integer[] ia=(Integer[])al.toArray(); 
+			//不能转换,Exception in thread "main" java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
+			</p>
+			<p>(&#10004;)Object[] io=al.toArray();</p>
+			<p>(&#10004;)Integer[] aa=new Integer[al.size()];aa=(Integer[])al.toArray(aa);</p>
+			</li>
+			<li>Collection col=new HashSet();col.add("Java");EnumSet set =EnumSet.copyOf(col);//报错，因为col里面的元素不是都是枚举值</li>
+			<li>
+				<pre class='prettyprint'>
+public static void main(String[] args) {
+		try{
+			String a=null;
+			//return 语句不会阻止finally的执行
+			return;
+			//System.exit会阻止finally的执行
+			//System.exit(1);
+		}catch(IndexOutOfBoundsException|NumberFormatException e){
+			//捕获多异常时，异常变量默认有final修饰,所以以下行报错
+			//e=new NumberFormatException("msg");
+		}catch(Exception e1){
+			//捕获一种异常时，异常变量没有final修饰,所以以下行正确
+			e1=new NumberFormatException("msg");
+		}finally{
+			//finally中如果出现throw或者return语句会导致try、catch中的throw或者return语句失效
+			System.out.println("finally");
+		}
+	}				
+				</pre>
+			</li>
+			<li><pre  class='prettyprint'>
+public static void test(String[] args) {
+		// *****************************************************************************
+		Integer f1 = 100, f2 = 100, f3 = 150, f4 = 150;
+		System.out.println(f1 == f2);// true
+		System.out.println(f3 == f4);// false
+		byte c = (byte) 0b11101001;
+		System.out.println(c);// -23
+		int d = 0b11101001;
+		System.out.println(d);// 233
+		// *****************************************************************************
+		char zhong = '疯';
+		System.out.println(zhong);// 疯
+		int zhongValue = zhong;
+		System.out.println(zhongValue);// 30127
+		char f = 97;
+		System.out.println(f);// a
+		// ********所有的正无穷和负无穷大都是相等的,非数是不等的*******************************************
+		System.out.println(2.12 / 0 == 2.15 / 0);// true
+		System.out.println(2 / 0);// error
+		double dou = Double.POSITIVE_INFINITY;
+		float flo = Float.POSITIVE_INFINITY;
+		System.out.println(dou == flo);// true
+		System.out.println(Double.NaN == Float.NaN);// false
+		// ********JAVA7中数值可以使用下划线分隔（整形和浮点型都可以）*************************************
+		int a1 = 2_0000_0000;
+		int a2 = 0b1000_0000_0000;
+		System.out.println(a1);
+		System.out.println(a2);
+		// *******************************************************************************
+		System.out.println(3 + 4 + "hello");// 7hello
+		System.out.println("hello" + 3 + 4);// hello34
+		// ******表达式类型自动提升************************************************
+		System.out.println('a' + 7 + "hello");// 104hello
+		System.out.println("hello" + 'a' + 7);// helloa7
+		// ******************************************************
+		String random = "";// 97-122
+		for (int i = 0; i < 6; i++) {
+			int randomValue = (int) (Math.random() * 26 + 97);
+			random = random + (char) randomValue;
+		}
+		System.out.println(random);
+		// ***********非短路&和短路&& , 非短路|和短路||*******************************************
+		System.out.println(2 & 4);// 010 & 100 = 000
+		System.out.println(true && false);
+		// ***********字符串比较******************************************************************
+		String a = new String("abc");
+		String b = new String("abcd");
+		String c1 = new String("afbce");
+		System.out.println(a.compareTo(b));// 返回长度差=-1
+		System.out.println(a.compareTo(c1));// 返回‘b’-‘f’=-4
+		// ***********循环******************************************************************
+		for (int i = 0; i < 10; i++) {
+			System.out.println("i:" + i);
+			for (int j = 0; j < 10; j++) {
+				System.out.println("j:" + j);
+				if (j == 1) {
+					System.out.println("break");
+					break; // 结束break所在循环（内层循环）
+				}
+			}
+		}
+		System.out.println("=====================================");
+		outer: for (int i = 0; i < 10; i++) {
+			System.out.println("i:" + i);
+			for (int j = 0; j < 10; j++) {
+				System.out.println("j:" + j);
+				if (j == 1) {
+					System.out.println("break");
+					break outer; // 结束外层循环（所有循环）
+				}
+			}
+		}
+		System.out.println("=======================================");
+		outer: for (int i = 0; i < 10; i++) {
+			System.out.println("i:" + i);
+			for (int j = 0; j < 10; j++) {
+				System.out.println("j:" + j);
+				if (j == 1) {// j的值将无法超过1
+					System.out.println("continue");
+					continue outer;
+				}
+				System.out.println("continue over");
+			}
+		}
+		// *****************************************************************************
+		BigDecimal bd1 = BigDecimal.valueOf(1.22);// 推荐
+		BigDecimal bd2 = new BigDecimal("1.12");// 推荐
+		BigDecimal bd3 = new BigDecimal(1.12);// 不推荐,会丢失精度
+		System.out.println(bd1.add(bd2));// 2.34
+		System.out.println(bd1.add(bd3));// 2.34000000000000010658141036401502788066864013671875
+		// ===============================
+		BigDecimal bd11 = BigDecimal.valueOf(1.2);// 推荐
+		BigDecimal bd22 = new BigDecimal("1.1");// 推荐
+		BigDecimal bd33 = new BigDecimal(1.1);// 不推荐,会丢失精度,实际创建的值并不等于1.1
+		System.out.println(bd11.add(bd22));// 2.3
+		System.out.println(bd11.add(bd33));// 2.300000000000000088817841970012523233890533447265625
+		System.out.println(bd33.toString());// 1.100000000000000088817841970012523233890533447265625
+
+}			
+			</pre></li>
+		</ol>
+	</div>
+</body>
+</html>

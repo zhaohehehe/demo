@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h3>boolean java.util.List.remove(Object o)</h3>
+		<p>符合条件的删除：o==null ? get(i)==null : <span style='color:red'>o.equals(get(i))</span>,针对红色条件，只要为true就会删除：</p>
+		<pre class='prettyprint'>
+class A {
+	public boolean equals(Object obj) {
+		return true;
+	}
+}	
+List&lt;Object> list=new ArrayList&lt;Object>();
+list.add("123");
+list.add("456");
+list.add("789");		
+System.out.println(list);//[123, 456, 789]
+System.out.println(list.remove(new A()));//true
+System.out.println(list);//[456, 789]	
+		</pre>
+		<pre class='prettyprint'>
+Collection&lt;String> c=new HashSet&lt;String>();
+c.add("123");
+c.add("456");
+c.add("789");
+Iterator&lt;String> it=c.iterator();
+System.out.println(c.size());
+while(it.hasNext()){
+	String temp=it.next();//一定要执行该语句，否则会出现Exception in thread "main" java.lang.IllegalStateException
+	System.out.println(temp);
+	//正确
+	it.remove();
+	//java.util.ConcurrentModificationException
+	//c.remove(temp);
+}	
+//或者
+Iterator&lt;String> it=c.iterator();
+it.forEachRemaining((obj)->{
+	it.next();//一定要执行该语句，否则会出现Exception in thread "main" java.lang.IllegalStateException
+	it.remove();
+});	
+		</pre>
+	</div>
+</body>
+</html>

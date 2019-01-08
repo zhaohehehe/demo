@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+<title>CachedRowSet使用 - 简单爱_wxg - 博客园</title>
+<meta property="og:description" content="public interface CachedRowSet extends RowSet,Joinable 所有标准 CachedRowSet 实现都必须实现的接口。Sun Microsystems " />
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife.css?v=g4Oce5UBaUn_FUwadcT09ICEg5NkULQGtUpNhTtrI8U1"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife-mobile.css?v=Xay8b9tTSw814nBzbOgvS6rrbcxrobMhvHJHdZAO9vI1"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/wxgblogs/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/wxgblogs/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/wxgblogs/wlwmanifest.xml"/>
+<script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+<script type="text/javascript">var currentBlogApp = 'wxgblogs', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="/bundles/blog-common.js?v=QQNw4WuWK_QJiLmdg5DGZTYgH4YBXNfbb4buv6xYQyY1" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">CachedRowSet使用,文章内容并非原创，是摘自
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/wxgblogs/p/6203338.html">博客</a>，仅供学习参考使用。
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><div class="cnblogs_code"><img id="code_img_closed_b8b75aa8-b224-4637-ad0f-f75e335ad34a" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_b8b75aa8-b224-4637-ad0f-f75e335ad34a" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_b8b75aa8-b224-4637-ad0f-f75e335ad34a" class="cnblogs_code_hide">
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">interface</span><span style="color: #000000"> CachedRowSet     
+      extends RowSet,Joinable
+     </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　<span style="font-size: 16px">　所有标准 CachedRowSet 实现都必须实现的接口。Sun Microsystems 提供的 CachedRowSet 接口的参考实现是一个标准实现。开发人员可以按原样使用此实现、可以扩展它，也可以选择自己编写此接口的实现。CachedRowSet 对象是一个数据行的容器，可在内存中缓存其各行，这使得进行操作时无需总是连接到数据源。此外，它还是一个 JavaBeansTM 组件，是可滚动、可更新、可序列化的。CachedRowSet 对象通常包含结果集中的行，但它也可以包含任何具有表格式的文件（如电子表格）中的行。<span style="color: #ff0000">参考实现只支持从 ResultSet 对象中获取数据，但是开发人员可以扩展 SyncProvider 实现，以提供对其他表格数据源的访问。</span></span><br>　<span style="font-size: 16px">　应用程序可以修改 CachedRowSet 对象中的数据，这些修改随后可以被传播回数据源。CachedRowSet 对象是一个非连接 rowset，这意味着它只会短暂地连接其数据源。连接数据源发生在读取数据以用各行填充自身，以及将更改传播回其底层数据源时。其余时间 CachedRowSet 对象是非连接的，包括修改它的数据时。非连接使 RowSet 对象更为简洁，因此更容易传递给另一个组件。例如，非连接 RowSet 对象可以被序列化并通过导线传递到瘦客户端 (thin client)。</span></p>
+<h3>1.0 创建 CachedRowSet 对象</h3>
+<p>　　以下代码行使用默认 CachedRowSet 构造方法来创建默认的 CachedRowSet 对象。</p>
+<div class="cnblogs_code"><img id="code_img_closed_5e0cca6b-c656-4c8e-9366-964f10d373e8" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_5e0cca6b-c656-4c8e-9366-964f10d373e8" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_5e0cca6b-c656-4c8e-9366-964f10d373e8" class="cnblogs_code_hide">
+<pre> CachedRowSetImpl crs = <span style="color: #0000ff">new</span><span style="color: #000000"> CachedRowSetImpl();
+ </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　<span style="font-size: 16px">　CachedRowSet 对象的属性设置为 BaseRowSet 对象的默认属性，此外，它将 RIOptimisticProvider 对象作为其同步提供者。 RIOptimisticProvider（RI 中包含的两个 SyncProvider 实现之一）是在没有指定同步提供者时， SyncFactory 单件 (singleton) 将提供的默认提供者。</span><br><span style="font-size: 16px">　　SyncProvider 对象提供了带有 reader 的（RowSetReader 对象）的 CachedRowSet 对象，用于从数据源读取数据以便用该数据填充自身。可以实现 reader 从 ResultSet 对象或者表格式的文件中读取数据。SyncProvider 对象还提供了 writer（RowSetWriter 对象），用于同步在与底层数据源中的数据断开连接时对 CachedRowSet 对象数据所做的任何更改。</span><br><span style="font-size: 16px">　　可以实现 writer 以在检查和避免冲突方面实施不同程度的关注。（如果使用某个值填充 rowset 后更改了数据源中的该值，则会发生冲突。）RIOptimisticProvider 实现假定冲突很少或没有冲突，因此不设置锁定。仅在没有冲突时，它才使用取自 CachedRowSet 对象的值更新数据源。也可以实现其他 writer，使其始终可将修改后的数据写入数据源，这可以通过不检查冲突来实现，或者从另一个方面着手，即通过设置足够的锁定来防止对数据源中的数据进行更改。这两种 writer 之间还可以有其他 writer 实现。</span><br><span style="font-size: 16px">　　CachedRowSet 对象可以使用任何已向 SyncFactory 单件注册的 SyncProvider 实现。通过调用以下代码行，应用程序可以找到已注册的 SyncProvider 实现。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_8e373480-2163-4283-90bf-e5e1c8bc2a82" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_8e373480-2163-4283-90bf-e5e1c8bc2a82" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_8e373480-2163-4283-90bf-e5e1c8bc2a82" class="cnblogs_code_hide">
+<pre>java.util.Enumeration providers = SyncFactory.getRegisteredProviders();</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　<span style="font-size: 16px">CachedRowSet 对象可使用两种方式来指定它将使用的 SyncProvider 对象。 向构造方法提供实现名.以下代码行创建 CachedRowSet 对象 crs2，使用默认值初始化该对象，但其 SyncProvider 对象是指定的。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_427cc520-8b38-48b1-b4fb-c4a89eba7d9e" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_427cc520-8b38-48b1-b4fb-c4a89eba7d9e" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_427cc520-8b38-48b1-b4fb-c4a89eba7d9e" class="cnblogs_code_hide">
+<pre> CachedRowSetImpl crs2 = <span style="color: #0000ff">new</span> CachedRowSetImpl( <span style="color: #800000">"</span><span style="color: #800000">com.fred.providers.HighAvailabilityProvider</span><span style="color: #800000">"</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　使用 CachedRowSet 方法 setSyncProvider 设置 SyncProvider.</span><span style="font-size: 16px">以下代码行为 crs 重置 SyncProvider 对象，该 CachedRowSet 对象是使用默认构造方法创建的。</span>&nbsp;&nbsp;</p>
+<div class="cnblogs_code"><img id="code_img_closed_7553a2aa-9115-4d24-96e3-5b441259084f" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_7553a2aa-9115-4d24-96e3-5b441259084f" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_7553a2aa-9115-4d24-96e3-5b441259084f" class="cnblogs_code_hide">
+<pre>crs.setSyncProvider(<span style="color: #800000">"</span><span style="color: #800000">com.fred.providers.HighAvailabilityProvider</span><span style="color: #800000">"</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h3>2.0 从 CachedRowSet 对象获取数据</h3>
+<p><span style="font-size: 16px">　　从 CachedRowSet 对象获取数据可使用继承自 ResultSet 接口的获取方法。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_5c225726-ae65-4b7e-a497-9b9eaab99a1d" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_5c225726-ae65-4b7e-a497-9b9eaab99a1d" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_5c225726-ae65-4b7e-a497-9b9eaab99a1d" class="cnblogs_code_hide">
+<pre>    <span style="color: #0000ff">while</span><span style="color: #000000"> (crs.next()) {
+        String name </span>= crs.getString(<span style="color: #800080">1</span><span style="color: #000000">);
+        </span><span style="color: #0000ff">int</span> id = crs.getInt(<span style="color: #800080">2</span><span style="color: #000000">);
+        Clob comment </span>= crs.getClob(<span style="color: #800080">3</span><span style="color: #000000">);
+        </span><span style="color: #0000ff">short</span> dept = crs.getShort(<span style="color: #800080">4</span><span style="color: #000000">);
+        System.</span><span style="color: #0000ff">out</span>.println(name + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> + id + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> + comment + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> +<span style="color: #000000"> dept);
+    }
+ 
+    </span><span style="color: #0000ff">while</span><span style="color: #000000"> (crs.next()) {
+        String name </span>= crs.getString(<span style="color: #800000">"</span><span style="color: #800000">NAME</span><span style="color: #800000">"</span><span style="color: #000000">);
+        </span><span style="color: #0000ff">int</span> id = crs.getInt(<span style="color: #800000">"</span><span style="color: #800000">ID</span><span style="color: #800000">"</span><span style="color: #000000">);
+        Clob comment </span>= crs.getClob(<span style="color: #800000">"</span><span style="color: #800000">COM</span><span style="color: #800000">"</span><span style="color: #000000">);
+        </span><span style="color: #0000ff">short</span> dept = crs.getShort(<span style="color: #800000">"</span><span style="color: #800000">DEPT</span><span style="color: #800000">"</span><span style="color: #000000">);
+        System.</span><span style="color: #0000ff">out</span>.println(name + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> + id + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> + comment + <span style="color: #800000">"</span>  <span style="color: #800000">"</span> +<span style="color: #000000"> dept);
+    }
+ </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h4>2.1 获取 RowSetMetaData</h4>
+<p><span style="font-size: 16px">　　通过在 RowSetMetaData 对象上调用 ResultSetMetaData 和 RowSetMetaData 的方法，应用程序可以获得有关 CachedRowSet 对象中各列的信息。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_3d7cae10-2ecd-4bab-b281-47b98cd2f28d" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_3d7cae10-2ecd-4bab-b281-47b98cd2f28d" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_3d7cae10-2ecd-4bab-b281-47b98cd2f28d" class="cnblogs_code_hide">
+<pre>RowSetMetaData rsmd =<span style="color: #000000"> (RowSetMetaData)crs.getMetaData();
+</span><span style="color: #0000ff">int</span> count =<span style="color: #000000"> rsmd.getColumnCount();
+</span><span style="color: #0000ff">int</span> type = rsmd.getColumnType(<span style="color: #800080">2</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　<span style="font-size: 16px">　注：要返回 RowSetMetaData 对象，实现必须重写 java.sql.ResultSet 中定义的 getMetaData() 方法返回 RowSetMetaData 对象。</span></p>
+<h3>3.0 更新 CachedRowSet</h3>
+<p><span style="font-size: 16px">　　对象更新 CachedRowSet 对象与更新 ResultSet 对象类似，但是因为更新 rowset 时它并未连接到其数据源，所以必须执行额外的步骤才能使更改在底层数据源中生效。调用方法 updateRow 或 insertRow 后，CachedRowSet 对象还必须调用方法 acceptChanges 使更新写入数据源。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_395b91a7-55e6-4dbe-88ac-127da35d1cf8" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_395b91a7-55e6-4dbe-88ac-127da35d1cf8" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_395b91a7-55e6-4dbe-88ac-127da35d1cf8" class="cnblogs_code_hide">
+<pre>crs.updateShort(<span style="color: #800080">3</span>, <span style="color: #800080">58</span><span style="color: #000000">);
+crs.updateInt(</span><span style="color: #800080">4</span>, <span style="color: #800080">150000</span><span style="color: #000000">);
+crs.updateRow();
+crs.acceptChanges();</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　下一个示例演示了移至插入行、在插入行上构建新行、将新行插入 rowset，然后调用方法 acceptChanges 将新行添加到底层数据源。注意，与获取方法一样，更新方法可以采用列索引或列名来指定所操作的列。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_2a90f5f4-ae36-4e4e-8368-6e2d8fa70f6c" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_2a90f5f4-ae36-4e4e-8368-6e2d8fa70f6c" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_2a90f5f4-ae36-4e4e-8368-6e2d8fa70f6c" class="cnblogs_code_hide">
+<pre><span style="color: #000000">     crs.moveToInsertRow();
+     crs.updateString(</span><span style="color: #800000">"</span><span style="color: #800000">Name</span><span style="color: #800000">"</span>, <span style="color: #800000">"</span><span style="color: #800000">Shakespeare</span><span style="color: #800000">"</span><span style="color: #000000">);
+     crs.updateInt(</span><span style="color: #800000">"</span><span style="color: #800000">ID</span><span style="color: #800000">"</span>, <span style="color: #800080">10098347</span><span style="color: #000000">);
+     crs.updateShort(</span><span style="color: #800000">"</span><span style="color: #800000">Age</span><span style="color: #800000">"</span>, <span style="color: #800080">58</span><span style="color: #000000">);
+     crs.updateInt(</span><span style="color: #800000">"</span><span style="color: #800000">Sal</span><span style="color: #800000">"</span>, <span style="color: #800080">150000</span><span style="color: #000000">);
+     crs.insertRow();
+     crs.moveToCurrentRow();
+     crs.acceptChanges();</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　注：insertRow() 方法在何处插入 CachedRowSet 对象的插入行内容是由实现定义的。CachedRowSet 接口的参考实现紧随当前行插入新行，但也可以实现为在任何其他位置插入新行。</span><br><span style="font-size: 16px">　　有关这些示例的另一个注意点是它们使用方法 acceptChanges 的方式。通过内部调用 RowSet 对象的 writer 将这些更改写入数据源，从而将 CachedRowSet 对象中的更改传播回底层数据源的正是此方法。为此，writer 不得不承受建立到数据源的连接所带来的开销。上述两个代码片断在调用 updateRow 或 insertRow 后立即调用方法 acceptChanges。但是，如果更改了多个行，则更高效的做法是在调用所有 updateRow 和 insertRow 后再调用 acceptChanges。如果只调用 acceptChanges 一次，则只需要建立一个连接。</span></p>
+<h3>4.0 更新底层数据源</h3>
+<p>　<span style="font-size: 16px">　执行 acceptChanges 方法时，在后台调用 CachedRowSet 对象的 writer（一个 RowSetWriterImpl 对象），以便将对 rowset 所作的更改写入底层数据源。实现该 writer 以建立到数据源的连接并写入更新。</span><br><span style="font-size: 16px">　　可通过 SyncProvider 接口的实现提供 writer，这已第 1 部分“创建 CachedRowSet 对象”中讨论。默认的参考实现提供者 RIOptimisticProvider 会实现其 writer 使用乐观并发控制 (optimistic concurrency control) 机制。也就是说，在 rowset 与数据库断开时它不对底层数据库维持任何锁定，在将数据写入数据源之前它只是检查是否有冲突。如果存在冲突，则不向数据源写入任何内容。</span><br><span style="font-size: 16px">　　SyncProvider 类提供的 reader/writer 设施是可插入的，允许自定义数据的获取和更新。如果需要其他的并发控制机制，可使用方法 setSyncProvider 插入其他 SyncProvider 实现。</span><br><span style="font-size: 16px">　　要使用乐观并发控制例程，RIOptismisticProvider 要同时维护其当前值及其原始值（刚好位于当前值之前的值）。注意，如果没有对 RowSet 对象中的数据进行任何更改，则其当前值和原始值相同，都是最初填充 RowSet 对象时使用的值。但是，一旦更改了 RowSet 对象中的任何值，当前值和原始值就不同了，尽管此时原始值仍是最初的值。随着后续对 RowSet 对象中的数据进行更改，其原始值和当前值仍保持不同，但是其原始值将是前一个当前值。</span><br><span style="font-size: 16px">　　关注原始值允许 writer 对 RowSet 对象的原始值和数据库中的值进行比较。如果数据库中的值与 RowSet 对象的原始值不同，则意味着数据库中的值已经更改，出现了冲突。writer 是否检查冲突、检查的程度如何，以及它如何处理冲突都取决于它的实现方式。</span></p>
+<h3>5.0 注册和通知侦听器</h3>
+<p><span style="font-size: 16px">　　作为 JavaBeans 组件，参与 JavaBeans 事件模型的所有 rowset 都继承了用来注册侦听器和用来通知这些侦听器 BaseRowSet 类中发生更改的各种方法。CachedRowSet 对象的侦听器是一个组件，只要 rowset 中发生更改，它就应得到通知。例如，如果 CachedRowSet 对象包含查询的结果，并且这些结果将以表格和条形图之类的形式显示，则可以向 rowset 将该表格和条形图注册为侦听器，这样它们可以更新以反映各种更改。要成为侦听器，表格和条形图类必须实现 RowSetListener 接口。然后可将它们添加到 CachedRowSet 对象的侦听器列表，如以下代码行所示。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_c9f992a6-c0d0-447c-b732-0b2f5d73cf39" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_c9f992a6-c0d0-447c-b732-0b2f5d73cf39" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_c9f992a6-c0d0-447c-b732-0b2f5d73cf39" class="cnblogs_code_hide">
+<pre><span style="color: #000000">    crs.addRowSetListener(table);
+    crs.addRowSetListener(barGraph);</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　每个移动指针或更改数据的 CachedRowSet 方法也将更改通知已注册的侦听器，所以当 crs 中发生更改时 table 和 barGraph 将得到通知。</span></p>
+<h3>6.0 向瘦客户端传递数据</h3>
+<p><span style="font-size: 16px">　　使用 CachedRowSet 对象的主要原因之一是要在应用程序的不同组件之间传递数据。因为 CachedRowSet 对象是可序列化的，所以可使用它（举例来说）将运行于服务器环境的企业 JavaBeans 组件执行查询的结果通过网络发送到运行于 web 浏览器的客户端。</span><br><span style="font-size: 16px">　　由于 CachedRowSet 对象是非连接的，所以和具有相同数据的 ResultSet 对象相比更为简洁。因此，它特别适于向瘦客户端（如 PDA）发送数据，这种瘦客户端由于资源限制或安全考虑而不适于使用 JDBC 驱动程序。所以 CachedRowSet 对象可提供一种“获取各行”的方式而无需实现全部 JDBC API。</span></p>
+<h3>7.0 滚动和更新</h3>
+<p><span style="font-size: 16px">　　CachedRowSet 对象的第二个主要用途是为那些本身不提供滚动和更新的 ResultSet 对象提供这些功能。换句话说，当 DBMS 不提供对滚动和更新的完全支持时，可使用 CachedRowSet 对象扩充启用 JDBC 技术的驱动程序（以下称为“JDBC 驱动程序”）的功能。要使不可滚动和只读的 ResultSet 对象变得可滚动和可更新，程序员只需创建一个使用该 ResultSet 对象的数据所填充的 CachedRowSet 对象即可。以下代码片断演示了这一过程，其中 stmt 是一个 Statement 对象。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_107f33b5-a17a-425e-96bf-21a84b046442" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_107f33b5-a17a-425e-96bf-21a84b046442" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_107f33b5-a17a-425e-96bf-21a84b046442" class="cnblogs_code_hide">
+<pre>    ResultSet rs = stmt.executeQuery(<span style="color: #800000">"</span><span style="color: #800000">SELECT * FROM EMPLOYEES</span><span style="color: #800000">"</span><span style="color: #000000">);
+    CachedRowSetImpl crs </span>= <span style="color: #0000ff">new</span><span style="color: #000000"> CachedRowSetImpl();
+    crs.populate(rs);</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　现在对象 crs 与对象 rs 一样，也包含了取自表 EMPLOYEES 的数据。不同的是 crs 的指针可以向前、向后移动，或者移动到特定行，即使 rs 的指针只能向前移动也是如此。此外，即使 rs 是不可更新的，crs 也将是可更新的，因为在默认情况下，CachedRowSet 对象是可滚动和可更新的。</span><span style="font-size: 16px">总之，可将 CachedRowSet 对象简单地看成是一个非连接的行集合，这些行将缓存在数据源外部。由于它比较小并且是可序列化的，所以它可以轻松地通过导线发送，并且非常适合于向瘦客户端发送数据。但是 CachedRowSet 对象也有局限性：它的大小限制在它一次可在内存中存储的数据量范围内。</span></p>
+<h3>8.0 获得通用数据访问</h3>
+<p><span style="font-size: 16px">　　CachedRowSet 类的另一个优势在于它能够从关系数据库以外各种数据源获取并存储数据。可以实现 rowset 的 reader 读取任何表格数据源（包括电子表格或平面文件）的数据，并用该数据填充其 rowset。因为 CachedRowSet 对象及其元数据都可以从头创建，所以充当 rowset 工厂的组件可以使用此功能来创建一个包含非 SQL 数据源数据的 rowset。但是，大部分情况下，希望 CachedRowSet 对象包含使用 JDBC API 从 SQL 数据库中获取的数据。</span></p>
+<h3>9.0 设置属性</h3>
+<p><span style="font-size: 16px">　　所有 rowset 都维护一个属性集，通常使用某种工具来设置这些属性。rowset 具有的属性的数量和种类各不相同，这取决于 rowset 的用途及其获得数据的方式。例如，从 ResultSet 对象获得其数据的 rowset 需要设置那些建立数据库连接所需的属性。如果某个 rowset 使用 DriverManager 设施建立连接，则它需要设置一个标识合适驱动程序的 JDBC URL 属性，还需要设置那些提供用户名和密码的属性。另一方面，如果 rowset 使用 DataSource 对象建立连接（这是首选的方法），则它无需设置 JDBC URL 属性。但是它需要设置用于数据源逻辑名、用户名和密码的属性。</span><br><span style="font-size: 16px">　　注：要使用 DataSource 对象建立连接，该 DataSource 对象必须已经向使用 Java Naming and Directory InterfaceTM (JNDI) API 的命名服务注册。通常由具有系统管理员资格的人员完成此注册。</span><br><span style="font-size: 16px">　　为了能够使用数据库的数据填充，rowset 需要设置 command 属性。此属性是一种 PreparedStatement 对象的查询，该对象允许查询具有在运行时（而不是设计时）设置的参数占位符。要用各种值设置这些占位符参数，rowset 要为设置每种数据类型的值提供设置方法，类似于 PreparedStatement 接口提供的设置方法。</span><br><span style="font-size: 16px">以下代码片断展示了如何设置 CachedRowSet 对象 crs 的 command 属性。注意，如果使用某种工具设置属性，则这就是该工具应使用的代码。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_508d3a46-d069-4ef5-8ea8-49c2e4f573e2" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_508d3a46-d069-4ef5-8ea8-49c2e4f573e2" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_508d3a46-d069-4ef5-8ea8-49c2e4f573e2" class="cnblogs_code_hide">
+<pre>crs.setCommand(<span style="color: #800000">"</span><span style="color: #800000">SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM       CUSTOMERS </span><span style="color: #800000">"</span> +
+                   <span style="color: #800000">"</span><span style="color: #800000">WHERE CREDIT_LIMIT &gt; ? AND REGION = ?</span><span style="color: #800000">"</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　用于设置该命令占位符参数的值被包含在 RowSet 对象的 params 字段中，该字段是一个 Vector 对象。CachedRowSet 类为设置其 params 字段中的元素提供了一组设置方法。以下代码片断演示了如何设置前一个示例查询中的两个参数。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_a9030a44-5a83-4c8e-90d1-5ec2c467cbbc" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_a9030a44-5a83-4c8e-90d1-5ec2c467cbbc" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_a9030a44-5a83-4c8e-90d1-5ec2c467cbbc" class="cnblogs_code_hide">
+<pre>    crs.setInt(<span style="color: #800080">1</span>, <span style="color: #800080">5000</span><span style="color: #000000">);
+    crs.setString(</span><span style="color: #800080">2</span>, <span style="color: #800000">"</span><span style="color: #800000">West</span><span style="color: #800000">"</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　p<span style="font-size: 16px">arams 字段现在包含两个元素，每个元素都是一个两元素长的数组。第一个元素是参数号；第二个元素是要设置的值。在这种情况下，params 的第一个元素是 1，5000，第二个元素是 2，"West"。当应用程序调用方法 execute 时，它会依次调用此 RowSet 对象的 reader，该 reader 会依次调用其 readData 方法。作为实现的一部分，readData 将获得 params 中的值并使用这些值设置命令的占位符参数。以下代码片断说明了在获得 Connection 对象 con 后 reader 如何执行此操作。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_f6f5d94b-1734-4f7b-989b-077d54972bd5" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_f6f5d94b-1734-4f7b-989b-077d54972bd5" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_f6f5d94b-1734-4f7b-989b-077d54972bd5" class="cnblogs_code_hide">
+<pre>    PreparedStatement pstmt =<span style="color: #000000"> con.prepareStatement(crs.getCommand());
+    reader.decodeParams();
+    </span><span style="color: #008000">//</span><span style="color: #008000"> decodeParams figures out which setter methods to use and does something
+    </span><span style="color: #008000">//</span><span style="color: #008000"> like the following:
+    </span><span style="color: #008000">//</span><span style="color: #008000">    for (i = 0; i &lt; params.length; i++) {
+    </span><span style="color: #008000">//</span><span style="color: #008000">        pstmt.setObject(i + 1, params[i]);
+    </span><span style="color: #008000">//</span><span style="color: #008000">    }</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-size: 16px">　　这里用于 crs 的命令是查询 "SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS WHERE CREDIT_LIMIT &gt; 5000 AND REGION = "West"。readData 方法使用以下代码行执行此命令后，它会获得 rs 的数据，该数据用于填充 crs。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_29be7bd3-0a2b-43b6-b930-fd732bc7adc4" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_29be7bd3-0a2b-43b6-b930-fd732bc7adc4" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_29be7bd3-0a2b-43b6-b930-fd732bc7adc4" class="cnblogs_code_hide">
+<pre>  ResultSet rs = pstmt.executeQuery();</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　<span style="font-size: 16px">上述代码片断说明了在后台进行的操作；这些操作不会出现在应用程序中，因为应用程序不会调用 readData 和 decodeParams 之类的方法。相反，以下代码片断展示了应用程序可能执行的操作。它设置 rowset 的命令、设置 command 属性并执行该命令。只需调用 execute 方法，就可使用从表 CUSTOMERS 请求的数据生成 crs。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_3a241b53-4c37-47dd-9994-f326dd61481d" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_3a241b53-4c37-47dd-9994-f326dd61481d" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_3a241b53-4c37-47dd-9994-f326dd61481d" class="cnblogs_code_hide">
+<pre>    crs.setCommand(<span style="color: #800000">"</span><span style="color: #800000">SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS</span><span style="color: #800000">"</span> +
+                   <span style="color: #800000">"</span><span style="color: #800000">WHERE CREDIT_LIMIT &gt; ? AND REGION = ?</span><span style="color: #800000">"</span><span style="color: #000000">);
+    crs.setInt(</span><span style="color: #800080">1</span>, <span style="color: #800080">5000</span><span style="color: #000000">);
+    crs.setString(</span><span style="color: #800080">2</span>, <span style="color: #800000">"</span><span style="color: #800000">West</span><span style="color: #800000">"</span><span style="color: #000000">);
+    crs.execute();
+ </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h3><span style="font-size: 16px">10.0 分页数据</span></h3>
+<p>　　<span style="font-size: 16px">因为 CachedRowSet 对象在内存中存储数据，所以它在任一时间可以包含的数据量是由可用的内存量决定的。要避开此限制，CachedRowSet 对象可以数据块（称为页）的形式从 ResultSet 对象中获取数据。要利用此机制，应用程序应使用方法 setPageSize 设置一页中要包括的行数。换句话说，如果页大小设置为 5，则一次从数据源中获取一个 5 行的数据块。应用程序也可选择设置一次可获取的最大行数。如果最大行数设置为 0，或者未设置最大行数，则对一次获取的行数没有限制。</span><br><span style="font-size: 16px">　　设置各个属性后，必须使用方法 populate 或方法 execute 用数据填充 CachedRowSet 对象。以下代码行演示了如何使用方法 populate。注意，该方法的这种形式采用两个参数，ResultSet 句柄和 ResultSet 对象中的行，从该行开始获取各行。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_cd3cc31a-54d0-418e-8e07-c37b50cdbe40" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_cd3cc31a-54d0-418e-8e07-c37b50cdbe40" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_cd3cc31a-54d0-418e-8e07-c37b50cdbe40" class="cnblogs_code_hide">
+<pre>     CachedRowSet crs = <span style="color: #0000ff">new</span><span style="color: #000000"> CachedRowSetImpl();
+     crs.setMaxRows(</span><span style="color: #800080">20</span><span style="color: #000000">);
+     crs.setPageSize(</span><span style="color: #800080">4</span><span style="color: #000000">);
+     crs.populate(rsHandle, </span><span style="color: #800080">10</span>);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　<span style="font-size: 16px">运行此代码时，将使用 rsHandle 中从第 10 行开始的 4 行数据填充 crs。</span><br><span style="font-size: 16px">　　下一个代码片断展示了如何使用方法 execute 填充 CachedRowSet 对象，该方法可以采用 Connection 对象作为一个参数，也可以不采用。此代码向 execute 传递 Connection 对象 conHandle。</span><span style="font-size: 16px">注意，以下代码片断和上述代码片断有两处差别。首先，没有调用方法 setMaxRows，所以没有对 crs 可以包含的行数设置限制。（记住，对于 crs 在内存中可以存储的数据量，总是有一个最高限制。）第二个差别是不能向方法 execute 传递 ResultSet 对象中起始获取行的行号。此方法始终从第一行开始获取。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_23c6a0d6-34fc-457c-a0b3-3a8d82c99d40" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_23c6a0d6-34fc-457c-a0b3-3a8d82c99d40" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_23c6a0d6-34fc-457c-a0b3-3a8d82c99d40" class="cnblogs_code_hide">
+<pre>     CachedRowSet crs = <span style="color: #0000ff">new</span><span style="color: #000000"> CachedRowSetImpl();
+     crs.setPageSize(</span><span style="color: #800080">5</span><span style="color: #000000">);
+     crs.execute(conHandle);
+ </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　<span style="font-size: 16px">运行此代码后，crs 将包含由 crs 的命令所生成的 ResultSet 对象中的 5 行数据。crs 的 writer 将使用 conHandle 连接数据源并执行 crs 的命令。然后应用程序就能够在 crs 中的数据上进行操作，方式与在任何其他 CachedRowSet 对象的数据上进行操作的方式相同。</span><br><span style="font-size: 16px">　　要访问下一页（数据块），应用程序可调用方法 nextPage。此方法创建新的 CachedRowSet 对象并用下一页的数据填充。例如，假定 CachedRowSet 对象的命令返回一个具有 1000 行数据的 ResultSet 对象 rs。如果页大小设置为 100，则首次调用方法 nextPage 将创建一个包含 rs 前 100 行的 CachedRowSet 对象。在使用这前 100 行的数据执行完所需的操作后，应用程序可以再次调用方法 nextPage 创建另一个带有 rs 第二个 100 行数据的 CachedRowSet 对象。第一个 CachedRowSet 对象中的数据不再存在于内存中，因为它已被第二个 CachedRowSet 对象的数据替换了。调用方法 nextPage 10 次后，第十个 CachedRowSet 对象将包含 rs 最后 100 行存储在内存中的数据。在任意给定时间，内存中仅存储一个 CachedRowSet 对象的数据。</span><br><span style="font-size: 16px">　　只要当前页不是各行的最后一页，方法 nextPage 就返回 true，没有其他页时，则返回 false。因此，可在 while 循环中使用它来获取所有页，正如在以下代码行中所演示的。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_931afdcf-d247-4523-b587-33d2e486bf58" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_931afdcf-d247-4523-b587-33d2e486bf58" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_931afdcf-d247-4523-b587-33d2e486bf58" class="cnblogs_code_hide">
+<pre> CachedRowSet crs =<span style="color: #000000"> CachedRowSetImpl();
+     crs.setPageSize(</span><span style="color: #800080">100</span><span style="color: #000000">);
+     crs.execute(conHandle);
+
+     </span><span style="color: #0000ff">while</span><span style="color: #000000">(crs.nextPage()) {
+         </span><span style="color: #0000ff">while</span><span style="color: #000000">(crs.next()) {
+             . . . </span><span style="color: #008000">//</span><span style="color: #008000"> operate on chunks (of 100 rows each) in crs,
+                   </span><span style="color: #008000">//</span><span style="color: #008000"> row by row</span>
+<span style="color: #000000">         }
+     }
+ </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>　　<span style="font-size: 16px">运行此代码片断后，应用程序会遍历所有 1000 行，但是每次内存中的数据只有 100 行。</span><br><span style="font-size: 16px">　　CachedRowSet 接口还定义了方法 previousPage。正如方法 nextPage 类似于 ResultSet 方法 next，方法 previousPage 也类似于 ResultSet 方法 previous。与方法 nextPage 类似，previousPage 创建一个 CachedRowSet 对象，包含作为页大小设置的行数。因此，（举例来说）方法 previousPage 可用在上述代码片断末尾的 while 循环中，以从最后一页开始逆向遍历到第一页。方法 previousPage 也与 nextPage 类似，因为它也可以用在 while 循环中，不同之处在于它是在前面还有页时返回 true，前面没有页时返回 false。</span><br><span style="font-size: 16px">　　通过将指针定位于每页最后一行的后面（如以下代码片断所执行的），方法 previous 就可以在每页中从最后一行遍历到第一行。代码也可将指针置于每页第一行的前面，然后在 while 循环中使用 next 方法，以在每页中从最第一行遍历到最后一行。</span><br><span style="font-size: 16px">　　以下代码片断假定是前一个代码片断的继续，这意味着第十个 CachedRowSet 对象的指针位于最后一行。代码将指针移到最后一行的后面，这样第一次调用方法 previous 会将指针放回到最后一行上。遍历最后一页（CachedRowSet 对象 crs）的所有行后，代码接着会进入 while 循环以获得第九页、向后遍历各行、转至第八页、向后遍历各行，依此类推，直到第一页的第一行为止。</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_45898c9a-d307-4639-8243-3edf15709805" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_45898c9a-d307-4639-8243-3edf15709805" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_45898c9a-d307-4639-8243-3edf15709805" class="cnblogs_code_hide">
+<pre><span style="color: #000000">     crs.afterLast();
+     </span><span style="color: #0000ff">while</span><span style="color: #000000">(crs.previous())  {
+         . . . </span><span style="color: #008000">//</span><span style="color: #008000"> navigate through the rows, last to first</span>
+<span style="color: #000000">     {
+     </span><span style="color: #0000ff">while</span><span style="color: #000000">(crs.previousPage())  {
+         crs.afterLast();
+         </span><span style="color: #0000ff">while</span><span style="color: #000000">(crs.previous())  {
+             . . . </span><span style="color: #008000">//</span><span style="color: #008000"> go from the last row to the first row of each page</span>
+<span style="color: #000000">         }
+     }</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+			</div>	
+</div><!--end: topics 文章、评论容器-->
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div class="clear"></div>
+	</div><!--end: main -->
+</div><!--end: home 自定义的最大容器 -->
+</body>
+</html>

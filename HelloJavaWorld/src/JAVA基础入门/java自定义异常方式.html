@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>java自定义异常方式</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">自定义异常分为2种:继承Exception或者Throwable</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-6">
+					<pre  class="pre-scrollable">
+public class MyFirstException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String expId;//异常的信息码
+	private String msg;//对异常的描述
+	public MyFirstException(){
+		super();
+	}
+	public MyFirstException(String msg){
+		super(msg);
+		this.msg=msg;
+	}
+	public MyFirstException(String expId,String msg){
+		super();
+		this.expId=expId;
+		this.msg=msg;
+	}
+	public MyFirstException(String msg,Throwable cause){
+		super(msg,cause);
+		this.msg=msg;
+	}
+	public MyFirstException(Throwable cause){
+		super(cause);
+	}
+	public void setExpId(String expId) {
+		this.expId = expId;
+	}
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	public String getExpId() {
+		return expId;
+	}
+	public String getMsg() {
+		return msg;
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}</pre>
+					</div>
+					<div class="col-sm-6">
+					<pre class="pre-scrollable">
+public class MySecondException extends Throwable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String expId;//异常的信息码
+	private String msg;//对异常的描述
+	public MySecondException(){
+		super();
+	}
+	public MySecondException(String msg){
+		super(msg);
+		this.msg=msg;
+	}
+	public MySecondException(String expId,String msg){
+		super();
+		this.expId=expId;
+		this.msg=msg;
+	}
+	public MySecondException(String msg,Throwable cause){
+		super(msg,cause);
+		this.msg=msg;
+	}
+	public MySecondException(Throwable cause){
+		super(cause);
+	}
+	public void setExpId(String expId) {
+		this.expId = expId;
+	}
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	public String getExpId() {
+		return expId;
+	}
+	public String getMsg() {
+		return msg;
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+					</pre>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"></h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+					<li class="list-group-item"></li>
+					<li class="list-group-item"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

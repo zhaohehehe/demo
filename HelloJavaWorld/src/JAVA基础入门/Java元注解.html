@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h2>注解定义：public @interface ClassName {}</h2>
+		<dl>
+			<dt>一、元注解：可以注解到注解的注解</dt>
+			<dd>@Documented:javadoc会提取带有Documented修饰的注解类修饰的对象</dd>
+			<dd>@Retention(value = RetentionPolicy.*)：只能用于修饰Annotation定义
+				<dl><dd>RetentionPolicy.CLASS:默认值，注解记录在class文件中，只会保留到编译阶段，不会加载到JVM，运行时不可获取</dd></dl>
+				<dl><dd>RetentionPolicy.RUNTIME:注解记录在class文件中，运行时可获取，可反射</dd></dl>
+				<dl><dd>RetentionPolicy.SOURCE:注解记录在源码中，不会被编译</dd></dl>
+			</dd>
+			<dd>@Target(value = ElementType.*),例如：@Target(value = { ElementType.ANNOTATION_TYPE,ElementType.CONSTRUCTOR })</dd>
+			<dd>@Inherited</dd>
+			<dd>@Repeatable:JDK8新特性
+				<pre class="prettyprint">
+@interface Roles {
+	Role[] value();
+}
+@Repeatable(Roles.class)
+// 一个容器注解,它里面必须要有一个 value 的属性，属性类型是一个被 @Repeatable 注解过的注解数组，注意它是数组
+@interface Role {
+	String role() default "";
+}
+//美人鱼即是鱼又是人
+@Role(role = "fish")
+@Role(role = "people")
+public class Mermaid {
+
+}				
+				</pre>
+			</dd>
+		</dl>
+	</div>
+</body>
+</html>

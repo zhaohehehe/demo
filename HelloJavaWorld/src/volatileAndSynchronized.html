@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>volatile和Synchronized的区别</title>
+</head>
+<body>
+<ul>
+	<li>锁提供了两种主要特性：互斥（mutual exclusion） 和可见性（visibility）
+		<ol type ="a">
+			<li>
+				互斥即一次只允许一个线程持有某个特定的锁；一次就只有一个线程能够使用该共享数据
+			</li>
+			<li>
+				可见性要更加复杂一些，它必须确保释放锁之前对共享数据做出的更改对于随后获得该锁的另一个线程是可见的 ——如果没有同步机制提供的这种可见性保证，线程看到的共享变量可能是修改前的值或不一致的值，这将引发许多严重问题。
+			</li>
+		</ol>
+	</li>
+	<li>Java中,为了保证多线程读写数据时保证数据的一致性,可以采用两种方式:
+		<ol type ="a">
+			<li>volatile关键字:
+				<ol>
+					<li>编译器为了加快程序运行的速度,对一些变量的写操作会先在寄存器或者是CPU缓存上进行,最后才写入内存.而在这个过程,变量的新值对其他线程是不可见的.而volatile的作用就是使它修饰的变量的读写操作都必须在内存中进行!
+					</li>
+				</ol>
+			</li>
+			<li>
+				synchronized关键字,或者使用锁对象:
+			</li>
+		</ol>
+	</li>
+	<li>volatile与synchronized区别:
+		<ol type ="a">
+			<li>volatile本质是在告诉jvm当前变量在寄存器中的值是不确定的,需要从主存中读取,synchronized则是锁定当前变量,只有当前线程可以访问该变量,其他线程被阻塞住.</li>
+			<li>volatile仅能使用在变量级别,synchronized则可以使用在变量,方法.</li>
+			<li>volatile仅能实现变量的修改可见性,但不具备原子特性,而synchronized则可以保证变量的修改可见性和原子性.</li>
+			<li>volatile不会造成线程的阻塞,而synchronized可能会造成线程的阻塞.</li>
+			<li>volatile标记的变量不会被编译器优化,而synchronized标记的变量可以被编译器优化.</li>
+		</ol>	
+	</li>
+	<li>
+		<strong>总结:</strong><p>
+		因此，在使用volatile关键字时要慎重，并不是只要简单类型变量使用volatile修饰，对这个变量的所有操作都是原来操作，当变量的值由自身的上一个决定时，如n=n+1、n++ 等，volatile关键字将失效，<br>
+		只有当变量的值和自身上一个值无关时对该变量的操作才是原子级别的，如n = m + 1，这个就是原级别的。<br>
+		所以在使用volatile关键时一定要谨慎，如果自己没有把握，可以使用synchronized来代替volatile。<br>
+	</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>Map使用</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+	<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Map分类</h3>
+			</div>
+			<div class="panel-body">
+			<pre class="pre-scrollable">
+		Map map = new HashMap&lt;>();
+		SortedMap m1=new TreeMap&lt;>();
+		WeakHashMap a=null;
+		IdentityHashMap b=null;//key严格相等
+		EnumMap c=null;
+			</pre>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">TreeMap比较器</h3>
+			</div>
+			<div class="panel-body">
+				<pre  class="pre-scrollable">
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+public class TreeMapComparator {
+
+	public static void main(String[] args) {
+		TreeSet&lt;Person> set2=new TreeSet&lt;Person>(new MyComparator2());
+		set2.add(new Person("zhaohe",90.40));
+		set2.add(new Person("zhangsan",45.78));
+		set2.add(new Person("lisi",89));
+		System.out.println("分数最多："+Collections.min(set2,new MyComparator2()));
+		TreeMap&lt;Person, Address> map=new TreeMap&lt;Person, Address>(new MyComparator());
+		map.put(new Person("zhaohe",90), new Address("changchun"));
+		map.put(new Person("zhangsan",89), new Address("dalian"));
+		map.put(new Person("lisi",97), new Address("beijing"));
+		System.out.println(map);
+	}
+
+}
+class Address{
+	String address;
+	public Address(String address){
+		this.address=address;
+	}
+	@Override
+	public String toString() {
+		return "address:"+this.address;
+	}
+}
+class Person{
+	String name;
+	double score;
+	public Person(String name,double score){
+		this.name=name;
+		this.score=score;
+	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "name:"+this.name+" score:"+String.valueOf(score);
+	}
+}
+class MyComparator implements Comparator&lt;Object>{
+
+	@Override
+	public int compare(Object o1, Object o2) {
+		// TODO Auto-generated method stub
+		Person p1=(Person)o1;
+		Person p2=(Person)o2;
+		
+		return p1.name.compareTo(p2.name);
+	}
+	
+}
+class MyComparator2 implements Comparator&lt;Object>{
+
+	@Override
+	public int compare(Object o1, Object o2) {
+		// TODO Auto-generated method stub
+		Person p1=(Person)o1;
+		Person p2=(Person)o2;
+		
+		return (int) (p2.score-p1.score);
+	}
+	
+}
+				
+				</pre>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

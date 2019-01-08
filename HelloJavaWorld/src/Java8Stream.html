@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+	<h3>Stream：<a href="https://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/">参考链接</a></h3>
+		<ol>
+			<li>Stream API 借助于同样新出现的 Lambda 表达式，极大的提高编程效率和程序可读性。</li>
+			<li>同时它提供串行和并行两种模式进行汇聚操作，并发模式能够充分利用多核处理器的优势，使用 fork/join 并行方式来拆分任务和加速处理过程</li>
+			<li>不是数据结构,它没有内部存储，它只是用操作管道从 source（数据结构、数组、generator function、IO channel）抓取数据。</li>
+		</ol>
+		<div style='display:block;clear:both'>
+			<div style='float:left;width:20%'>&nbsp;</div>
+			<div style='float:left;width:60%'>
+			<pre class="prettyprint">
+Java 的并行 API 演变历程基本如下：
+1.0-1.4 中的 java.lang.Thread
+5.0 中的 java.util.concurrent
+6.0 中的 Phasers 等
+7.0 中的 Fork/Join 框架
+8.0 中的 Lambda
+			</pre>	
+			</div>
+			<div style='float:left;width:20%'>&nbsp;</div>
+		</div>
+		<div style='clear:both'></div>
+		<h3>流的操作类型：</h3>	
+		<ol>
+			<li>
+				<strong>Intermediate：</strong>一个流可以后面跟随零个或多个 intermediate 操作。其目的主要是打开流，做出某种程度的数据映射/过滤，然后返回一个新的流，交给下一个操作使用。这类操作都是惰性化的（lazy），就是说，仅仅调用到这类方法，并没有真正开始流的遍历。
+				<h4 style='color:blue'>常见操作：map (mapToInt, flatMap 等)、 filter、 distinct、 sorted、 peek、 limit、 skip、 parallel、 sequential、 unordered</h4>
+			</li>
+			<li><strong>Terminal：</strong>一个流只能有一个 terminal 操作，当这个操作执行后，流就被使用“光”了，无法再被操作。所以这必定是流的最后一个操作。Terminal 操作的执行，才会真正开始流的遍历，并且会生成一个结果，或者一个 side effect。
+				<h4 style='color:blue'>常见操作：forEach、 forEachOrdered、 toArray、 reduce、 collect、 min、 max、 count、 anyMatch、 allMatch、 noneMatch、 findFirst、 findAny、 iterator</h4>
+			</li>
+			<li><strong>short-circuiting：</strong>用以指：
+				<ol>
+					<li>对于一个 intermediate 操作，如果它接受的是一个无限大（infinite/unbounded）的 Stream，但返回一个有限的新 Stream。</li>
+					<li>对于一个 terminal 操作，如果它接受的是一个无限大的 Stream，但能在有限的时间计算出结果。</li>
+					<li>例如：int sum = widgets.stream().filter(w -> w.getColor() == RED).mapToInt(w -> w.getWeight()).sum();</li>
+				</ol>
+				<h4 style='color:blue'>常见操作：anyMatch、 allMatch、 noneMatch、 findFirst、 findAny、 limit</h4>
+			</li>
+		</ol>
+		<h3>Stream构造：</h3>
+		<pre class='prettyprint'>
+// 1. Individual values
+Stream stream = Stream.of("a", "b", "c");
+// 2. Arrays
+String [] strArray = new String[] {"a", "b", "c"};
+stream = Stream.of(strArray);
+stream = Arrays.stream(strArray);
+// 3. Collections
+List&lt;String> list = Arrays.asList(strArray);
+stream = list.stream();
+		</pre>
+		<h3>数值Stream构造：</h3>
+		<pre class='prettyprint'>
+IntStream.of(new int[]{1, 2, 3}).forEach(System.out::println);
+IntStream.range(1, 3).forEach(System.out::println);
+IntStream.rangeClosed(1, 3).forEach(System.out::println);
+IntStream.builder().add(1).add(2).add(3).build();
+		</pre>
+		<h3>Stream转换：</h3>
+		<pre class='prettyprint'>
+// 1. Array
+String[] strArray1 = stream.toArray(String[]::new);
+// 2. Collection
+List&lt;String> list1 = stream.collect(Collectors.toList());
+List&lt;String> list2 = stream.collect(Collectors.toCollection(ArrayList::new));
+Set set1 = (Set) stream.collect(Collectors.toSet());
+Stack stack1 = stream.collect(Collectors.toCollection(Stack::new));
+// 3. String
+String str = stream.collect(Collectors.joining()).toString();
+		</pre>
+		<span style='color:red'>注意：一个 Stream 只可以使用一次，上面的代码为了简洁而重复使用了数次</span>
+		<h3>例子：</h3>
+		<ol>
+			<li><span>转换大写</span>
+				<pre class='prettyprint'>
+List&lt;String> output = list.stream().map(String::toUpperCase).collect(Collectors.toList());				
+				</pre>
+			</li>
+			<li><span>平方数</span>
+				<pre class='prettyprint'>
+List&lt;Integer> nums = Arrays.asList(1, 2, 3, 4);
+List&lt;Integer> squareNums = nums.stream().map(n -> n * n).collect(Collectors.toList());				
+				</pre>
+			</li>
+			<li><span>一对多map</span>
+				<pre class='prettyprint'>
+Stream&lt;List&lt;Integer>> inputStream = Stream.of(
+Arrays.asList(1),
+Arrays.asList(2, 3),
+Arrays.asList(4, 5, 6)
+);
+Stream&lt;Integer> outputStream = inputStream.flatMap((childList) -> childList.stream());
+				</pre>
+			</li>
+			<li><span>留下偶数</span>
+				<pre class='prettyprint'>
+Integer[] sixNums = {1, 2, 3, 4, 5, 6};
+Integer[] evens =
+Stream.of(sixNums).filter(n -> n%2 == 0).toArray(Integer[]::new);
+				</pre>
+			</li>
+			<li><span>这段代码首先把每行的单词用 flatMap 整理到新的 Stream，然后保留长度不为 0 的，就是整篇文章中的全部单词了</span>
+				<pre class='prettyprint'>
+List&lt;String> list=new ArrayList<>();
+list.add("a,23");list.add("l5,6");list.add("789");
+List&lt;String> output = list.stream().flatMap(line -> Stream.of(line.split(","))).filter(word -> word.length() > 0). collect(Collectors.toList());
+				</pre>
+			</li>
+			<li><span>forEach 是 terminal 操作，因此它执行后，Stream 的元素就被“消费”掉了，你无法对一个 Stream 进行两次 terminal 运算.一下面代码是错的：</span>
+				<pre>
+			stream.forEach(element -> doOneThing(element));
+			stream.forEach(element -> doAnotherThing(element));
+				</pre>但是peek可以， peek 对每个元素执行操作并返回一个新的 Stream
+				<pre class='prettyprint'>
+Stream.of("one", "two", "three", "four").filter(e -> e.length() > 3).peek(e -> System.out.println("Filtered value: " + e))
+.map(String::toUpperCase).peek(e -> System.out.println("Mapped value: " + e))
+.collect(Collectors.toList());				
+				</pre>
+			</li>
+			<li><span>Optional 的两个用例</span>
+				<pre class='prettyprint'>
+String text = "123";
+// Java 8
+Optional.ofNullable(text).ifPresent(System.out::println);
+// Pre-Java 8
+if (text != null) {
+	System.out.println(text);
+}
+// Java 8
+int length = Optional.ofNullable(text).map(String::length).orElse(-1);
+// Pre-Java 8
+// return if (text != null) ? text.length() : -1;
+				</pre>
+			</li>
+			<li><span>reduce 的用例</span>
+				<pre class='prettyprint'>
+// 字符串连接，concat = "ABCD"
+String concat = Stream.of("A", "B", "C", "D").reduce("", String::concat); 
+// 求最小值，minValue = -3.0
+double minValue = Stream.of(-1.5, 1.0, -3.0, -2.0).reduce(Double.MAX_VALUE, Double::min); 
+// 求和，sumValue = 10, 有起始值
+int sumValue = Stream.of(1, 2, 3, 4).reduce(0, Integer::sum);
+// 求和，sumValue = 10, 无起始值
+sumValue = Stream.of(1, 2, 3, 4).reduce(Integer::sum).get();
+// 过滤，字符串连接，concat = "ace"
+concat = Stream.of("a", "B", "c", "D", "e", "F").
+filter(x -> x.compareTo("Z") > 0).
+reduce("", String::concat);				
+				</pre>
+			</li>
+			<li><span>limit/skip</span>
+				<pre class='prettyprint'>
+limit 返回 Stream 的前面 n 个元素；skip 则是扔掉前 n 个元素				
+				</pre>
+			</li>
+			<li><span>转换大写</span>
+				<pre class='prettyprint'>
+List&lt;Person> personList2 = persons.stream().limit(2).sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
+List&lt;Person> personList2 = persons.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).limit(2).collect(Collectors.toList());
+				</pre>
+				<h5 style='color:red'>先limit后排序效率更高</h5>
+			</li>
+			<li><span>找出最长一行的长度</span>
+				<pre class='prettyprint'>
+BufferedReader br = new BufferedReader(new FileReader("c:\\SUService.log"));
+int longest = br.lines().mapToInt(String::length).max().getAsInt();
+br.close();
+System.out.println(longest);				
+				</pre>
+			</li>
+			<li><span>找出全文的单词，转小写，并排序</span>
+				<pre class='prettyprint'>
+List&lt;String> words = br.lines().flatMap(line -> Stream.of(line.split(" "))).filter(word -> word.length() > 0).
+ map(String::toLowerCase).distinct().sorted().collect(Collectors.toList());
+br.close();
+System.out.println(words);
+				</pre>
+			</li>
+			<li><span>allMatch、anyMatch、noneMatch</span>
+				<pre class='prettyprint'>
+boolean isAllAdult = persons.stream().allMatch(p -> p.getAge() > 18);
+boolean isThereAnyChild = persons.stream().anyMatch(p -> p.getAge() &lt; 12);
+				</pre>
+			</li>
+			<li><span>生成 10 个随机整数</span>
+				<pre class='prettyprint'>
+Random seed = new Random();
+Supplier&lt;Integer> random = seed::nextInt;
+Stream.generate(random).limit(10).forEach(System.out::println);
+//Another way
+IntStream.generate(() -> (int) (System.nanoTime() % 100)).limit(10).forEach(System.out::println);
+				</pre>
+			</li>
+			<li><span>自实现 Supplier</span>
+				<pre class='prettyprint'>
+public class Test {
+	public static void main(String[] args) throws IOException {
+		Stream.generate(new PersonSupplier()).limit(10)
+				.forEach(p -> System.out.println(p.getName() + ", " + p.getAge()));
+	}
+}
+class Person {
+	public int no;
+	private String name;
+	private int age;
+	public Person(int no, String name, int age) {
+		this.no = no;
+		this.name = name;
+		this.age = age;
+	}
+	public String getName() {
+		System.out.println(name);
+		return name;
+	}
+	public int getAge() {
+		return age;
+	}
+}
+
+class PersonSupplier implements Supplier&lt;Person> {
+	private int index = 0;
+	private Random random = new Random();
+	@Override
+	public Person get() {
+		return new Person(index++, "StormTestUser" + index, random.nextInt(100));
+	}
+}
+				</pre>
+			</li>
+			<li><span>生成一个等差数列</span>
+				<pre class='prettyprint'>
+Stream.iterate(0, n -> n + 3).limit(10). forEach(x -> System.out.print(x + " "));
+				</pre>
+			</li>
+			<li><span>用 Collectors 来进行 reduction 操作</span>
+				<pre class='prettyprint'>
+Map&lt;Integer, List&lt;Person>> personGroups = Stream.generate(new PersonSupplier()).
+ limit(100).
+ collect(Collectors.groupingBy(Person::getAge));
+Iterator it = personGroups.entrySet().iterator();
+while (it.hasNext()) {
+ Map.Entry&lt;Integer, List&lt;Person>> persons = (Map.Entry) it.next();
+ System.out.println("Age " + persons.getKey() + " = " + persons.getValue().size());
+}
+				</pre>
+				<pre class='prettyprint'>
+Map&lt;Boolean, List&lt;Person>> children = Stream.generate(new PersonSupplier()).
+ limit(100).
+ collect(Collectors.partitioningBy(p -> p.getAge() &lt; 18));
+System.out.println("Children number: " + children.get(true).size());
+System.out.println("Adult number: " + children.get(false).size());
+				</pre>
+				<h5 style='color:red'>partitioningBy 其实是一种特殊的 groupingBy，它依照条件测试的是否两种结果来构造返回的数据结构，get(true) 和 get(false) 能即为全部的元素对象。</h5>
+			</li>
+			<li><span>Predict和Stream</span>
+				<pre class='prettyprint'>
+public class Jdk8PredicateAndStream {
+	public static void main(String[] args) {
+		Collection&lt;String> books=new HashSet&lt;String>();
+		books.add("JAVA");
+		books.add("C++");
+		books.add("C#");
+		//=======Predicate编程==================
+		int a=Jdk8PredicateAndStream.calAll(books,obj->{return ((String)obj).contains("C");});
+		int b=Jdk8PredicateAndStream.calAll(books, obj->((String)obj).length()>3);
+		System.out.println(a);
+		System.out.println(b);
+	}
+	public static int calAll(Collection&lt;String> books,Predicate&lt;Object> p){
+		int total=0;
+		for(Object obj:books){
+			if(p.test(obj)){
+				total++;
+			}
+		}
+		return total;
+	}
+}
+				</pre>
+			</li>
+		</ol>
+	</div>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>原生JAVA Socket实现多人聊天室</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">1.服务器端监听类</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.swing.JOptionPane;
+
+/**
+ * 服务器端监听类
+ * 
+ * @author ZH
+ *
+ */
+public class ServerListener extends Thread {
+	@Override
+	public void run() {
+		try (ServerSocket socketServer = new ServerSocket(30000)) {//// 创建绑定到特定端口的服务器套接字
+																	//// 1-65535
+			while (true) {
+				// 不断接受客户端请求，若没有请求到来，accept会一直处于等待状态，线程阻塞
+				// 所以accept等这类阻塞方法，不能在主线程中使用，否则主线程会被阻塞，需要放置到独立的线程当中
+				Socket socket = socketServer.accept();
+				JOptionPane.showMessageDialog(null, "客户端您好！服务器收到了您的30000端口的连接！");
+				// 与客户端进行通信
+				ChatRoom cs = new ChatRoom(socket);
+				cs.start();
+				// 添加socket到队列
+				ChatManager.getChatManager().AddChatPeople(cs);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		ServerListener serverListener = new ServerListener();
+		serverListener.start();
+	}
+
+}
+					
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">2.通信线程（聊天室）</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.Socket;
+
+/*
+ * 客户端与服务端通信线程:每一个连上的客户端，服务器都有一个线程为之服务
+ * getInputStream/getOutputStream在客户端还是服务端的作用区别
+	客户端上的使用
+	1.getInputStream方法可以得到一个输入流，客户端的Socket对象上的getInputStream方法得到输入流其实就是从服务器端发回的数据。
+	2.getOutputStream方法得到的是一个输出流，客户端的Socket对象上的getOutputStream方法得到的输出流其实就是发送给服务器端的数据。
+	
+	服务器端上的使用
+	1.getInputStream方法得到的是一个输入流，服务端的Socket对象上的getInputStream方法得到的输入流其实就是从客户端发送给服务器端的数据流。
+	2.getOutputStream方法得到的是一个输出流，服务端的Socket对象上的getOutputStream方法得到的输出流其实就是发送给客户端的数据。
+ */
+public class ChatRoom extends Thread {
+
+	Socket socket;
+
+	public ChatRoom(Socket socket) {
+		this.socket = socket;
+	}
+
+	/*
+	 * 向客户端发送数据
+	 */
+	public void send(String str) {
+		// System.out.println(str);
+		try {
+			socket.getOutputStream().write(str.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * 服务器会不断地从客户端读取内容，把读取到的内容向其他客户端广播
+	 */
+	@Override
+	public void run() {
+		// server端直接向客户端发送的信息（信息来源于server端）
+		send("success\n");
+		send("success\n");
+		// server端广播客户端发来的信息给其他客户端（先接收客户端的信息然后再广播，信息来源于客户端）
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				System.out.println("====================");
+				System.out.println(line);
+				// 注意：该demo使用的都是按行读取的方式，所以所有的消息之后都要添加换行符'\n'，负责没有消息输出
+				ChatManager.getChatManager().broadcast(this, line + "\n");
+			}
+			br.close();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+}
+
+					
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">3.管理socket</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+import java.util.Vector;
+
+/*
+ * 
+ * 添加socket到队列，发送数据
+ * 
+ */
+
+public class ChatManager {
+	// 因为一个聊天系统只有一个聊天管理，所以使用单例模式
+	private ChatManager() {
+	}
+
+	private static final ChatManager cm = new ChatManager();
+
+	public static ChatManager getChatManager() {
+		return cm;
+	}
+
+	// 创建保存socket的队列
+	Vector<ChatRoom> vector = new Vector<ChatRoom>();
+
+	// 添加聊天人
+	public void AddChatPeople(ChatRoom cs) {
+		vector.add(cs);
+	}
+
+	/**
+	 * 广播消息给向其他客户端
+	 * 
+	 * @param broadcastPerson
+	 *            该条消息的发送方
+	 * @param str
+	 */
+	public void broadcast(ChatRoom broadcastPerson, String str) {
+		for (int i = 0; i < vector.size(); i++) {
+			ChatRoom chatsocket = (ChatRoom) vector.get(i);
+			if (!broadcastPerson.equals(chatsocket)) {
+				chatsocket.send(str);
+			}
+		}
+	}
+
+}
+
+					
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">4.多个控制台模拟客户端</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class ChatClient1 {
+	public static void main(String[] args) {
+		try {
+			Socket socket = new Socket("127.0.0.1", 30000);
+			//向server端发送数据线程
+			new Thread() {
+				public void run() {
+					DataOutputStream out;
+					try {
+						out = new DataOutputStream(socket.getOutputStream());
+						BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+						while (true) {
+							String msg = reader.readLine();
+							//注意：该demo使用的都是按行读取的方式，所以所有的消息之后都要添加换行符'\n'，负责没有消息输出
+							out.writeUTF("向服务器发送数据 " + msg + "from client1" + socket.getLocalSocketAddress() + "\n");
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+			}.start();
+
+			//从server端获取消息线程
+			new Thread() {
+				public void run() {
+					BufferedReader b;
+					try {
+						b = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+						while (true) {
+							String msg = b.readLine();
+							if (msg != null) {
+								System.out.println("来自服务器的数据：" + msg);
+							}
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+			}.start();
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
+============================================================================================
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class ChatClient2 {
+	public static void main(String[] args) {
+		try {
+			Socket socket = new Socket("127.0.0.1", 30000);
+			//向server端发送数据线程
+			new Thread() {
+				public void run() {
+					DataOutputStream out;
+					try {
+						out = new DataOutputStream(socket.getOutputStream());
+						BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+						while (true) {
+							String msg = reader.readLine();
+							//注意：该demo使用的都是按行读取的方式，所以所有的消息之后都要添加换行符'\n'，负责没有消息输出
+							out.writeUTF("向服务器发送数据 " + msg + "from client2" + socket.getLocalSocketAddress() + "\n");
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+			}.start();
+			
+			//从server端获取消息线程
+			new Thread() {
+				public void run() {
+					BufferedReader b;
+					try {
+						b = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+						while (true) {
+							String msg = b.readLine();
+							if (msg != null) {
+								System.out.println("来自服务器的数据：" + msg);
+							}
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+			}.start();
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
+
+
+					
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">JAVA socket 直观感受</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class GreetingClient {
+	/**
+	 * Socket 链接服务器并发送请求，获取响应
+	 * 
+	 * @param args
+	 */
+
+	public static void main(String[] args) {
+		// 启动server线程
+		new Thread() {
+			public void run() {
+				ServerListener serverListener = new ServerListener();
+				serverListener.start();
+			};
+		}.start();
+		try {
+			Socket client = new Socket("127.0.0.1", 30000);
+			System.out.println("Just connected to " + client.getRemoteSocketAddress());
+			OutputStream outToServer = client.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF("Hello from" + client.getLocalSocketAddress());
+
+			InputStream inFromServer = client.getInputStream();
+			DataInputStream in = new DataInputStream(inFromServer);
+			System.out.println("Server says " + in.readUTF());
+			client.close();
+		} catch (IOException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+}					
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">模拟说明</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-12">
+					<pre  class="pre-scrollable">
+1.运行ServerListener.java main函数；
+2.运行ChatClient1.java main函数和ChatClient2.java main函数；
+3.在ChatClient1控制台宿便输入字符然后回车，可以看到ChatClient2控制台中打印出ChatClient1的广播信息（ChatClient1的控制台没有，因为代码中设定不需要对自己广播，可以修改）；
+同样在ChatClient2控制台宿便输入字符然后回车，可以看到ChatClient1控制台中打印出ChatClient2的广播信息；
+					</pre>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h3>java.util.Vector：</h3>
+		<ol>
+			<li><span>Vector是线程安全的，ArrayList不是，所以前者效率要高（但是尽量不使用前者，以下代码Collections可以使得ArrayList安全）</span>
+				<pre class='prettyprint'>
+java.util.Collections.synchronized*(Collection)				
+				</pre>
+			</li>
+		</ol>
+		<h3>java.util.EnumSet：</h3>
+		<ol>
+			<li><span>noneOf方法会创建一个指定枚举类型的空的EnumSet</span>
+				<pre class='prettyprint'>
+enum Season{	SPRING,SUMMER,FALL,WINTER 		}
+EnumSet&lt;Season> es2=EnumSet.noneOf(Season.class);
+源代码：
+ if (universe.length &lt;= 64)//枚举个数如果超过64，new JumboEnumSet
+    return new RegularEnumSet &lt;>(elementType, universe);
+ else
+    return new JumboEnumSet &lt;>(elementType, universe);
+				</pre>
+			</li>
+			<li>其他静态方法：allOf、of、range、complementOf、copyOf</li>
+		</ol>
+		<h3>java.util.HashSet</h3>
+		<ol>
+			<li>如果重写equals和hashCode方法，应该保证：equals方法返回true时，应该保证hashCode值也相等。</li>
+			<li>如果2个对象的equals方法返回true,但是hashCode不等，HashSet会将两个对象放到Hash表的不同位置，从而2个对象都会添加成功，这就与Set集合的规则冲突了；</li>
+	 		<li>如果HashCode相同，但是equals返回false,HashSet试图把他们保存在同一个位置，所以会在这个位置用链式结构来保存多个对象，如果有两个以上元素含有相同的HashCode值，将会导致性能下降。</li>
+		</ol>
+		<h3>java.util.TreeSet</h3>
+		<ol>
+			<li>如果2个对象对应类的equals方法返回true,2个对象的compareTo方法比较应该返回0</li>
+			<li>修改可能会导致出错，因为Treeset不会重新排序修改的集合,TreeSet可以删除没有被修改的实例变量、且不与其他修改实例变量的对象重复的对象</li>
+		</ol>
+		<h3>ArrayDeque基于数组的双端队列，和ArrayList一样可动态分配；可以代替Stack使用（Stack比较古老，尽量避免使用）</h3>
+		<h3>Deque双端队列：Queue+Stack</h3>
+		<h3>LinkedList除了是一个List之外，也是双端队列、栈</h3>
+		<ol>
+			<li><span></span>
+				<pre class='prettyprint'>
+				</pre>
+			</li>
+		</ol>
+		<h3>java.util.HashSet</h3>
+		<ol>
+			<li><span></span>
+				<pre class='prettyprint'>
+				</pre>
+			</li>
+		</ol>
+	</div>
+</body>
+</html>

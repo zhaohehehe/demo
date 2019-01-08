@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>课程内容</title>
+<style>
+span{
+	color:red;
+	font-weight:bold;
+}
+body{
+	line-height:1.5em;
+}
+p1{
+color:#FF00FF;
+display: block;
+} 
+</style>
+</head>
+<body>
+<h1><cite>圣思源 Java SE 视频</cite>&nbsp;&nbsp;内容</h1>
+<hr>
+<ol>
+	<li>System.out.println会换行，System.out.print不会，为什么？</li>
+	<li id="C007">
+		<h3>007面向对象之JNI</h3>
+		<ol type="a">
+			<li>安装GCC</li>
+			<li>编写HelloJNI.java文件：<pre>
+public class HelloJNI {
+   static {
+      System.loadLibrary("hello"); // Load native library at runtime
+                                   // hello.dll (Windows) or libhello.so (Unixes)
+   }
+   // Declare a native method sayHello() that receives nothing and returns void
+   private native void sayHello(String name);
+   // Test Driver
+   public static void main(String[] args) {
+      new HelloJNI().sayHello("jni");  // invoke the native method
+   }
+}
+			</pre></li>
+			<li>执行 javac HelloJNI.java</li>
+			<li>执行 javah -jni HelloJNI</li>
+			<li>查看HelloJNI.h，本地实现生成的函数：<pre>
+#include &lt;jni.h&gt;
+#include &lt;stdio.h&gt;
+#include "HelloJNI.h"
+
+// Implementation of native method sayHello() of HelloJNI class
+JNIEXPORT void JNICALL Java_HelloJNI_sayHello(JNIEnv *env, jobject thisObj, jstring name){
+ printf("Hello %s \n", name );
+   return;
+}
+			</pre></li>
+			<li>执行 gcc -c -I"%JAVA_HOME%\include" -I"%JAVA_HOME%\include\win32" HelloJNI.c</li>
+			<li>执行 gcc -Wl,--add-stdcall-alias -shared -o hello.dll HelloJNI.o</li>
+			<li>前2步可以合并：gcc -Wl,--add-stdcall-alias -I"%JAVA_HOME%\include" -I"%JAVA_HOME%\include\win32" -shared -o hello.dll HelloJNI.c</li>
+			<li>可以查看dll文件  nm hello.dll</li>
+			<li>执行 >java HelloJNI ，报错 Can't load IA 32-bit .dll on a AMD 64-bit platform</li>
+			<li>dll为32位的，重新生成64位的dll就可以了</li>
+		</ol>
+	</li>
+	<li id="C008">
+		<h3>008面向对象之垃圾回收</h3>
+		<p1>程序员调用gc()或者System.gc()只是建议，依然不能控制垃圾回收；</p1>
+		<p1>堆内存中的对象是可以反复利用的，直到没有引用时被垃圾回收；而栈中的数据不能保存，随着方法的执行结束；</p1>
+	</li>
+	<li id="C009">
+		<h3>009面向对象之封装</h3>
+		<p>1.继承（inheritence）2.封装（Encapsulation）3.多态（Polymorphism）</p>
+		<p1>补充特性：抽象(只关注对象有哪些属性和行为，并不关注这些行为的细节)</p1>
+		<p1>补充特性：多态分为编译时多态（重载）和运行时多态（重写）-》向上转型</p1>
+		<p1>基于对象和面向对象是不同的，二者都实现了封装。例如JS是基于对象的，但是没有继承的特性，当然也没有多态了</p1>
+		<p1>语言特性：</p1>
+		<p1>&nbsp;Ruby:日本人发明，解释型语言，纯粹的面向对象编程，完全跨平台，弱类型，典型MVC框架：Ruby On Rails.</p1>
+		<p1>&nbsp;Python：解释型脚本语言，格式不自由（对于一种特定的问题，只要有一种最好的办法解决就好了）</p1>
+		<p1>写字板，word等工具是有格式的编辑器，要使用无格式的编辑器编辑JAVA程序，例如NotePad</p1>
+		<p1>1.4以前的JDK版本才需要配置CLASSPATH(dt.jar,tools.jar),以后的版本可以自动找到相应的lib</p1>
+		<p1>CLASSPATH通常都会在最前边加上“.;...”,表示强制解释器在当前路径下寻找java类</p1>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C010">
+		<h3>010面向对象之封装</h3>
+		<ol type="a">
+			<li>成员变量如果没有初始化，那么使用默认的初始值:<br>
+				byte,short,int,long 初始值为0；<br>
+				float,double为0.0；<br>
+				char类型为‘\u0000’(unicode十六进制编码)；<br>
+				boolean初始值为false;
+			</li>
+			
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C015">
+		<h3>015方法参数传递详解</h3>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C016">
+		<h3>016方法重载剖析</h3>
+		<ol type="a">
+			<li>方法重载判断的唯一依据是参数，可以是类型不同或者参数个数不同；<br>
+				<span>注意</span>：返回值不能用于判断方法是否重载
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C017">
+		<h3>017继承剖析</h3>
+		<ol type="a">
+			<li>构造函数相互调用用this（参数），而且this关键字必须放在第一行。</li>
+			<li>extends时，如果父类没有提供不带参数的默认构造方法，那么子类可以通过super(参数)来显示指定要调用的（而且是父类提供的）构造方法，而不必去调用无参构造方法。super()也必须放在第一行。</li>
+			<li>extends时，父类没有提供无参构造方法，那么子类只可以显示super()调用父类的构造方法，不能指定自己的构造方法</li>
+			<li>extends时，父类如果提供无参构造方法，那么子类可以指定自己的构造方法</li>
+			<li>子类继承父类（父类是抽象类的情况下），子类必须实现父类的所有抽象方法，除非子类也是抽象类。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C022">
+		<h3>022static 和final关键字</h3>
+		<ol type="a">
+			<li>如果某个类实现了某个接口&&这个类不是抽象类---->那么这个类必须实现接口的所有方法</li>
+			<li>多态：所谓多态，就是父类型的引用可以指向子类型的实例，或者接口的引用可以指向实现该接口的类的实例。关于接口与实现接口的类之间的强制类型转换方式与父类和子类之间的强制类型转换方式一样。</li>
+			<li>static 修饰属性：该类的所有对象（实例）共享一份静态成员变量，也就是说可以使用类名.静态成员变量名 访问。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C023">
+		<h3>023static 与final使用陷阱</h3>
+		<ol type="a">
+			<li>
+static 修饰方法：使用类名.方法名 调用；经常将一些不包含逻辑的通用辅助功能设定为static方法，而且一般没有属性，都是一些静态方法的工具类，例如Arrays.
+<pre>
+  (1)静态方法只能继承，不能重写（Override），但是可以隐藏；
+  (2)特殊情况注意：如果子类和父类的方法中都去掉static(实际情况，只能同时加或者同时去掉)，那么输出的结果都是children
+    public class Children extends Parent{
+		static void name(){System.out.println("children");}
+		public static void main(String[] args) {
+			Parent p=new Children();
+			p.name();//parent
+			Children c=new Children();
+			c.name();//children 
+		}
+	}
+	class Parent{
+		static void name(){
+			System.out.println("parent");
+		}
+	}
+</pre>
+		</li>
+			<li>final修饰类：该类是终态类，不能被继承；<br>
+ 				final修饰方法：该方法是终态方法，不能被重写；<br>
+ 				final修饰属性：必须赋值（赋值方法主要有2种，见下一节24讲），属性不能被修改。
+ 			</li>
+			<li>当final修饰原生数据类型时，表示该数据类型的值不能被修改；但是当final修饰一个引用类型时，表示该引用类型不能再指向其他的对象，但是该引用所指的对象内容是可变的。</li>
+			<li>宏替换</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C024">
+		<h3>024static 与final使用陷阱 续</h3>
+		<ol type="a">
+			<li>final修饰成员变量，赋值方法主要有 2 种：<br>
+ 				（1）在声明final变量时初始化赋值；<br>
+ 				（2）在声明final变量时不进行赋值&&在类的所有构造方法中都要赋值。<br>
+ 				（3）一般final和static合用，使得多个对象只拥有一个常量。 
+ 			</li>
+			<li>静态代码块：执行顺序先于构造函数(.java-->.class文件-->JVM-->机器码)；<br>
+ 				静态代码块在类（class文件）从磁盘加载到Java虚拟机上时执行；<br>
+				 而生成对象是在JVM加载到类文件才能生成对象（可能生成多个对象，调用多次），执行构造函数。
+			</li>
+			<li>静态方法中不能访问非静态的成员变量，静态方法中也不能使用this关键字。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C025">
+		<h3>025单例模式详解</h3>
+		<ol type="a">
+			<li>接口中的成员变量都是public,final,static的</li>
+			<li>一个类不能既是abstract又是final</li>
+			<li>单例模式：private,static</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C027">
+		<h3>027访问控制符详解</h3>
+		<ol type="a">
+			<li>默认的（不加任何访问修饰符）：在类内部以及【相同包】下面的类可以使用。</li>
+			<li>protected:修饰的属性或者方法可以在类内部、相同包以及该类的【子类内部】（即可以被子类继承下来）所访问。</li>
+			<li>private:类内部可访问。</li>
+			<li>instanceof:<br>
+				People people=new Man();<br>
+				System.out.println(people instanceof People);//true</li>
+		</ol>
+		<table style="color:#FF00FF">
+				<thead>
+					<tr>
+						<th align="center">修饰符</th>
+						<th align="center">当前类</th>
+						<th align="center">同&nbsp;包</th>
+						<th align="center">子&nbsp;类</th>
+						<th align="center">其他包</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td align="center">public</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+					</tr>
+					<tr>
+						<td align="center">protected</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+						<td align="center">×</td>
+					</tr>
+					<tr>
+						<td align="center">default</td>
+						<td align="center">√</td>
+						<td align="center">√</td>
+						<td align="center">×</td>
+						<td align="center">×</td>
+					</tr>
+					<tr>
+						<td align="center">private</td>
+						<td align="center">√</td>
+						<td align="center">×</td>
+						<td align="center">×</td>
+						<td align="center">×</td>
+					</tr>
+				</tbody>
+			</table> <a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C028">
+		<h3>028Object类详解</h3>
+		<ol type="a">
+			<li>相等性比较（==）:<br>
+ 				（1）对于原生数据类型，比较的是值是否相等；
+ 				（2）对于引用类型来说，比较的是引用的地址是否相等（是否指向同一个对象）；
+			</li>
+			<li>引用的返回值 = 该引用所指对象.Class().Name()+@+16进制哈希码（即地址）；该形式是调用默认toString()方法得来的，也可以重写之。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C029">
+		<h3>029String类源代码深析</h3>
+		<ol type="a">
+			<li>equals()方法定义在Object中，因此所有类都有equals()方法；<br>
+ 				（1）对于Object类（对象）的equals方法：官方文档源码的返回值是 return this==obj；(Object obj为传入参数)，判断的是 是否指向同一个对象，其实等价于==；<br>
+ 				（2）对于String类（对象，继承了Object,并重写了equals方法）的equals方法：判断当前字符串与传进来的字符串的值是否相等；对2个字符串的字符进行逐一比较；所以对于String类对象请使用equeals方法。<br>
+				<span>所以</span>：对于继承了Object,并重写了equals方法的类，equals判断内容是否相等，例如String类；而对于只继承Object,并没有重写equals方法的类，判断的是地址是否相等，例如自定义的类Student.
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C030">
+		<h3>030</h3>
+		<ol type="a">
+			<li>字符串池类似于缓存，如果不指定new String()的形式创建，那么不会存在Heap中，减少空间。intern()方法一定返回池中的字符串</li>
+			<li>StringBuffer.toString():String</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C031">
+		<h3>031Java数组剖析</h3>
+		<ol type="a">
+			<li>包装类：<br>
+ 				（1）Integer:取值.intValue():int；
+ 			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C032">
+		<h3>032Java数组内存地址解析</h3>
+		<ol type="a">
+			<li><p1>java数组一定要看成是2部分：数组的引用（类似于指针）和实际的数组对象</p1></li>
+			<li>对数组内容的比较一定不要使用equals()方法；</li>
+			<li>int[] a=new int[9];a是指向数组首地址的引用；</li>
+			<li>Person[] person = new Person[3];//此时生成 0 个对象，因为引用类型的数组初始化为null，不同于基本类型数组的初始化</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C033">
+		<h3>033</h3>
+		<ol type="a">
+			<li>上一讲的person[i]中存的是对象的引用，不是对象本身；</li>
+			<li>(1)int[][] a= new int[3][];	&nbsp;&nbsp;a[0]=new int[1];&nbsp;&nbsp;a[1]=new int[3];&nbsp;&nbsp;a[2]=new int[2];<br>
+  				(2)int[][] a=new int[][3];//error<br>
+  				(3)int[] a=new int[]{1,2,4};<br>
+  				(4)int[][] a=new int[][]{{1,2},{1,3,1},{1,3,4,6}};<br>
+  				(5)int[][][] a=new int[3][2][3];
+  			</li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C034">
+		<h3>034Arrays类解析及数组疑难剖析</h3>
+		<ol type="a">
+			<li>简单的swap不能实现交换，而且Java没有指针，但是数组是对象，即是引用类型，可以实现指针的功能；因此可用数组实现交换。</li>
+			<li>接口数组：因为接口（抽象，final）不能实例化，所以不能够new Interface();但是可以 I[0]=new A(); class A implements I;</li>
+			<li>数组本身的equals()方法是判断地址的，要判断数组内容，要使用Arrays的equals()方法；java.lang包自动导入，java.util.Arrays类需要手动导入。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C035">
+		<h3>035冒泡排序、交换排序及快速排序原理与实现</h3>
+		<ol type="a">
+			<li>public static void arraycopy(Object src,int srcPos,Object dest,int destPos,int length)//System.arraycopy(....);</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C036">
+		<h3>036Java数组查找方式及二分查找剖析</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C037">
+		<h3>037作业详解</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C038">
+		<h3>038IDE详细介绍</h3>
+		<ol type="a">
+			<li>ctrl+shift+o import快捷键</li>
+			<li>ctrl +/ 注释快捷键</li>
+			<li>alt + <- 返回上次页面</li>
+			<li>按住ctrl,鼠标点击Object类，查看链接的源码（如果没有关联，手动关联JDK安装路径中的src.zip源码）</li>
+			<li>编辑图标点在某个焦点上，ctrl + T，查看所有有关的源码！！！</li>
+			<li>如何产生帮助文档？<br>
+				(1)菜单栏Project->Generate Javadoc<br>
+				(2)指定Javadoc command: C:\Program Files\Java\jdk1.8.0_45\bin\javadoc.exe
+			</li>
+			<li>可以对帮助文档的格式进行转换？<br>
+				（1）首先下载转换工具，jd2chm.exe，使用pathyon写的，并将该工具拷贝到doc目录下（和index.html在同级目录）；<br>
+				（2）需要安装插件htmlhelp.exe;下载安装即可；<br>
+				（3）打开命令行，执行jd2chm.exe：给项目命名和标题（不能有空格，例如MyDocuments）；<br>
+				（4）在doc目录下即可看到chm格式的帮助文档。	
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C039">
+		<h3>039深入详解ArrayList</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C040">
+		<h3>040ArrayList源代码深入剖析</h3>
+		<ol type="a">
+			<li>集合里面只能存放对象，不能存放原生数据类型；并且存放的是对象的引用</li>
+			<li>toArray()方法：Object->Integer可以，但是Object[]->Integer[]不可以，需要借助toArray(T[])才可以！！</li>
+			<li>直接打印ArrayList会调用ArrayList中每个对象的toString()方法；</li>
+			<li>ArrayList底层使用数组实现，当使用不带参数的构造方法生成对象时，实际上会在底层生成长度为10的Object类型的数组；<br>
+				如果实际参数长度小于10，什么都不做；如果大于10，那么ArrayList底层新生成一个数组，长度为原数组的1.5倍+1，然后将原数组的内容拷贝到新数组中，并且后续内容都会添加到新数组中。如果新数组无法容纳新加的数组时，重复该过程；
+			</li>
+			<li>ArrayList插入、删除移动元素，代价大。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C041">
+		<h3>041LinkedList源代码深入剖析</h3>
+		<ol type="a">
+			<li>LinkedList增加了getFirst(),getLast(),peek(),pop(),push();</li>
+			<li>LinkedList底层使用双向链表实现，每个节点是一个Entry&lt;T>；</li>
+			<li>当执行插入、删除操作时，使用LinkedList;当执行查找（搜索）操作时，使用ArrayList。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C042">
+		<h3>042LinkedList源代码深入剖析续</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C043">
+		<h3>043作业 (Stack和Queue的实现)</h3>
+		<ol type="a">
+			<li>Java 的Stack是一个实现类，而Queue是一个接口，一般用的很少，都是自己重新实现。</li>
+			<li>无论是栈还是队列，里面都会维护一个成员变量用于存储数据，该成员变量请<span>使用LinkedList类型</span>，只用LinkedList的方法就可以实现作业的功能。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C044">
+		<h3>044使用LinkedList实现Stack与Queue</h3>
+		<ol type="a">
+			<li>向ArrayList中add对象时，实际上就是将该对象放到了ArrayList底层维护的数组中，而向LinkedList中add对象时，实际内部会生成一个Entry对象，该对象的结构为：<br>
+				<pre>
+	class Entry{
+		Entry previous;
+		Object element;
+		Entry next;
+	}	
+	LinkedList中维护的是一个个Entry对象。		
+				</pre>
+			</li>
+			<li></li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C045">
+		<h3>045hashCode与equals深度剖析与源码详解</h3>
+		<ol type="a">
+			<li>Object类equals()方法特点：<br>
+				(1)自反性：x.equals(x)==true;<br>
+				(2)对称性：如果x.equals(y)==true，那么y.equals(x)==true;<br>
+				(3)传递性：如果x.equals(y)==true而且y.equals(z)==true，那么x.equals(z)==true；<br>
+				(4)一致性：如果第一次调用x.equals(y)==true，那么第2次、第3次、第n次调用都==true，前提是没有修改过x,y;<br>
+				(5)非空引用x，x.equals(null)==false;
+			
+			</li>
+			<li>Object类hashCode()方法特点：<br>
+				(1)在Java应用的一次执行过程当中，对同一个对象的hashCode()方法的多次调用应该返回同样的值（前提是对象信息没有改变）。如果是不同次的Java应用中，hashCode值可以不同<br>
+				(2)如果两个对象的equals方法返回true,那么hashCode值一定相等<br>
+				(3)如果两个对象的equals方法返回false,那么hashCode值可以相同也可以不同，但是如果不同可以提高应用性能。<br>
+				(4)对于Object类来说，不同的对象的hashCode值是不同的（因为Object类的hashCode值可以看做是是对象的地址的一种表示形式）
+			</li>
+			<li>当使用hashSet时，会调用hashCode方法：<br>
+		<pre>
+		if(hashCode不等){
+			直接添加；
+		}else{
+			if(equals不等){
+				直接添加；
+			}else{
+				表示对象已存在，不再添加；
+			}
+		}
+		</pre>
+			</li>
+			<li>String类hashCode()比较的是内容，而Object类比较的是地址</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C046">
+		<h3>046迭代器、TreeSet及Comparator深度剖析</h3>
+		<ol type="a">
+			<li>使用TreeSet：基本数据类型可以不指定，默认排序</li>
+			<li>使用TreeSet：其他Object必须自定义排序规则Comparator</li>
+			<li>定义的实现Comparator接口的比较器重写compare()方法，<span>不需要重写equals方法</span></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C047">
+		<h3>047实现自己的Comparator及Collections详解</h3>
+		<ol type="a">
+			<li>Arrays是数组的辅助类，Collections是集合的辅助类</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C048">
+		<h3>048Map深入详解及遍历Map的两种实现手段</h3>
+		<ol type="a">
+			<li>HashMap在put相同的key时，value会发生覆盖</li>
+			<li>Map中key不能重复(return Set)， value可以重复(return Collection)</li>
+			<li>运行参数配置？<br>
+				(1)菜单栏Run->Run configurations,选择第二项Arguments，在Program arguments中输入字符串数组参数；<br>
+				(2)参数之间用空格隔开，数组用""隔开；
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C049">
+		<h3>049Map.Entry详解与作业要求</h3>
+		<ol type="a">
+			<li>map.entrySet()的返回值类型是：Map.Entry(内部类)</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C050">
+		<h3>050使用集合重新实现作业</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C051">
+		<h3>051策略模式深度剖析及其在集合框架中的应用</h3>
+		<ol type="a">
+			<li>策略模式缺点？客户端必须知道所有的策略类，维护的代价较高.</li>
+			<li>解决办法：工厂方法可以在一定程度上解决这个问题。</li>
+			<li>作业：使用策略模式对Person类进行排序；按照name,age,id从大到小排除（age相同的情况下，按照id来排序）</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C052">
+		<h3>052 HashSet与HashMap源代码深度剖析</h3>
+		<ol type="a">
+			<li>HashSet的底层是使用HashMap实现的，只不过value值无意义，所以是dummy(假的)的Object</li>
+			<li>put()方法：哈希表中维护的是Entry[]，每个元素是Entry类型的，每个Entry都有一个指向下一个Entry的引用。类似每个哈希位置都有一个链表，发生冲突(即equals()方法为true)的元素在一条链表上，每次插入新的元素方法链表的尾部（即哈希位置上，保证时刻都是最新的那个值）</li>
+			<li>add()方法添加对象时，所添加的对象作为map的key,value其实都是同一个值，即dummy(假的)的Object</li>
+			<li>当哈希表中的元素个数达到loadFactor时，就会开辟新的更大的哈希表。例如HashMap初始长度为16，loadFactor为0.75，那么初始可装的元素个数为16*0.75=12；如果不够用，则将容量扩容到原来的2倍</li>
+			<li>根据key.hashCode()值来计算散列位置</li>
+			
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C053">
+		<h3>053泛型详解泛型详解及集合结尾部分</h3>
+		<ol type="a">
+			<li>Vector和ArrayList一样，不同之处在于Vector是同步的，而且是2倍扩容</li>
+			<li>HashTable和HashMap一样</li>
+			<li>Properties是Hashtable的一个子类，用的较多；它的键和值都是String</li>
+			<li>JDK1.5的新特性之一：泛型</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C054">
+		<h3>054自定义泛型与泛型的常见陷阱</h3>
+		<ol type="a">
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C055">
+		<h3>055泛型高阶晋级</h3>
+		<ol type="a">
+			<li>泛型中限定T的类型时:<br>
+				向下的：使用extends关键字限制实现类<span>或者接口</span><br>
+				向上的：使用super关键字（使用很少）
+				
+			</li>
+			<li>通配符"?"的使用：className&lt;?>等价于className&lt;? extends Object>;<span>注意：此时不能修改集合中的信息，只读</span></li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>  
+	</li>
+	<li id="C058">
+		<h3>058 可变参数详解</h3>
+		<ol type="a">
+			<li>Integer类有一个缓存，它会缓存-128~127之间的整数，超过这个范围会就会重新new Integer()生成新的对象。<span>前提是：不是用new生成的整数。</span></li>
+			<li>方法接受可变参数。。。，只能接受一个可变参数，而且要放在最后</li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C059">
+		<h3>059类型安全的枚举</h3>
+		<ol type="a">
+			<li>switch()后面可以跟5中数据类型：char,byte,short,int,enum</li>
+			<li>我们定义的每个枚举类型都继承自java.lang.Enum类，枚举中的每个成员默认都是public static final的，而且每个成员其实就是枚举类型的一个实例。</li>
+			<li>枚举的ordinal()方法返回位置，多用于EnumSet,EnumMap数据结构的实现。</li>
+			<li>Enum构造函数默认是private</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C060">
+		<h3>060EnumSet与EnumMap详解</h3>
+		<ol type="a">
+			<li>EnumMap的Key要求是枚举类型的</li>
+			<li>枚举多用于权限控制</li>
+			<li>静态导入：<br>
+				(1)import static cpm.shengsiyuan.study.类名.静态成员变量名；<br>
+				(2)import static cpm.shengsiyuan.study.类名.静态方法名；
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C061">
+		<h3>061Java反射机制深度剖析</h3>
+		<ol type="a">
+			<li><span>反射机制应用于运行期间！！！！</span></li>
+			<li>Java反射机制用到的类：<br>
+			(1)java.lang下：Class类；
+			(2)java.lang.reflect下:Field,Method,Constructor,Array
+			</li>
+			<li>Java中，无论生成某个类的多少个对象，这些对象都对应于同一个Class对象。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C062">
+		<h3>062 Class类、Method类及Field类的使用方式深度探析</h3>
+		<ol type="a">
+			<li><span>获取某各类或者某个对象所对应的Class对象的三种方式？</span><br>
+				(1)使用Class类的静态方法forName():Class.forName("java.lang.String");<br>
+				(2)使用类的Class语法:String.class;<br>
+				(3)使用对象的getClass()方法:String s="abc";Class&lt;?> classType=s.getClass();(getSuperclass()返回父类的对象)
+			</li>
+			<li><span>通过类的构造方法生成对象？<br></span>
+				<pre>
+		Class&lt;?> classType=obj.getClass();
+		/**
+		 * java.lang.reflect.Constructor.newInstance()方法
+		 * 前提条件：构造函数必须是public的；而且适用于代参构造方法
+		 */
+		Constructor cons1=classType.getConstructor(new Class[]{});
+		Object obj1=cons1.newInstance(new Object[]{});
+		/**
+		 * 以上两行代码等价于下行代码
+		 * java.lang.Class.newInstance()方法
+		 * 前提条件：构造函数是无参的；
+		 */
+		Object obj0=classType.newInstance();
+		/**
+		 * 带参构造
+		 */
+		Constructor cons2=classType.getConstructor(new Class[]{String.class,int.class});
+		Object obj2=cons2.newInstance(new Object[]{"tom",9});				
+				</pre>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C063">
+		<h3>063反射机制大总结</h3>
+		<ol type="a">
+			<li>Integer.TYPE相当于int.class,返回的是原生类型所对应的Class对象；而Integer.class返回的是Integer所对应的Class对象。</li>
+			<li>反射机制可以打破封装机制</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C064">
+		<h3>064使用反射机制调用对象的私有方法、访问对象的私有成员变量</h3>
+		<ol type="a">
+			<li>AccessibleObject类可以限制Java的访问控制</li>
+			<li>一般在反射中：Method或者Field中的方法或者属性如果添加~delared~,则可以访问任何限定修饰符（privte也可以），但是如果不添加declared则只能针对public的方法或属性，</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C065">
+		<h3>065静态代理模式深度剖析</h3>
+		<ol type="a">
+			<li>代理是基于反射机制的！</li>
+			<li>客户端-->代理对象-->目标对象</li>
+			<li>代理模式一般涉及的角色？<br>
+				(1)真实角色(实现或继承抽象角色)：最终的引用对象；<br>
+				(2)代理角色(实现或继承抽象角色)：内部含有对真实对象的引用；可以代替真实对象，也可以附加其他操作；<br>
+				(3)抽象角色：声明真实对象和代理对象之间的接口（定义成抽象类或者接口都可以）。
+			</li>
+			<li>如果每一个类都有一个代理类，那么类的数量就会2倍增加;而且当事先不知道真实角色（即代理类不知道应该维护什么真实对象）怎么办呢？<br>
+				解决办法：使用<span>Java动态代理类</span>解决问题。
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C066">
+		<h3>066Java动态代理模式详解</h3>
+		<ol type="a">
+			<li>Java动态代理？<br>
+				(1) Interface InvocationHandler:<br>
+				&nbsp;&nbsp;&nbsp;重要方法：public Object invoke(Object obj,Method method,Object[] args);<br>
+				&nbsp;&nbsp;&nbsp;参数：真实类（Object类，因为可以代理任何真实类），代理方法，方法参数（动态实现）<br>
+				(2)Proxy:动态代理类，Proxcy里面维护了一个InvocationHandler(每个代理实例都有其对应的InvocationHandler)<br>
+				&nbsp;&nbsp;&nbsp;重要方法之一：static Object newProxyInstance(ClassLoader loader,Class[] interfaces,InvocationHandler h)<br>
+				&nbsp;&nbsp;&nbsp;参数：Class[] interfaces表明生成的代理实例<span>实现了这些接口</span>;将工作托管给InvocationHandler h，实际工作的是 h.
+			</li>
+			<li><blockquote cite="http://www.shangxueba.com/jingyan/1853835.html" style="margin-left:0px"><a href="java动态代理中的invoke方法是如何被自动调用的.html" target="_blank">java动态代理中的invoke方法是如何被自动调用的?</a></blockquote></li>
+			<li>
+				<pre>
+	/**
+	 * 所以关联invoke()的过程是： 
+	 * （1）得到Proxy类的Class对象：Proxy.getProxyClass，实现了真实对象的接口；
+	 * （2）得到代理类的实例：com.sun.proxy.$Proxy0，运行期间动态生成
+	 * （3）调用代理类实例的接口方法：如下源代码，调用$Proxy0.request()方法中调用了h.invoke(this, m3, null)方法，
+	 * 	        在本例中，即为DynamicProxySubject的invoke()方法：
+	 *     ：this为代理实例（即最后返回的subject）;
+	 *     ：m3为 Class.forName("***.RealSubject").getMethod("request",new Class[0]);
+	 *     ：args为参数，因为该例中的request()方法没有参数，所以此时的args就是等于null，可以在DynamicProxySubject.invok()中验证;
+	 * 总结起来：$Proxy0通过调用InvocationHandler.invok()方法实现对RealSubject的操作；
+	 *		 InvocationHandler.invok()方法的调用在调用$Proxy0.request()接口方法时执行。
+	 */
+	/* $Proxy0源代码，父类为Proxy
+	 *  public final String toString() {
+			 return (String) super.h.invoke(this, m2, null); 
+		}
+	*/
+				</pre>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C067">
+		<h3>067InvocationHandler接口与Proxy类深度剖析</h3>
+		<ol type="a">
+			<li>动态代理步骤？<br>
+				(1)创建一个实现接口InvocationHandler的类，它必须实现invoke方法；<br>
+				(2)创建被代理的类以及接口；<br>
+				(3)通过Proxy的静态方法；newProxyInstance(ClassLoader loader,Class[] interfaces,InvocationHandler h)创建一个代理；<br>
+				(4)通过代理调用方法。
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C085">
+		<h3>085Java内部类深度剖析及常见使用陷阱</h3>
+		<ol type="a">
+			<li>内部类种类：<br>
+				(1)静态内部类：只能访问外部类的<span>静态</span>成员变量与<span>静态</span>方法；<br>
+				<p1>java不允许在非静态内部类里面定义静态成员，静态内部类是外部类类相关的，而不是外部类对象相关的</p1>
+				&nbsp;&nbsp;&nbsp;生成静态内部类对象：OuterClass.StaticInnerClass staticClass=new OuterClass.StaticInnerClass();<br>
+				(2)成员内部类：可以访问外部类的静态与非静态成员变量与方法；<br>
+				&nbsp;&nbsp;&nbsp;生成成员内部类对象：OuterClass1.MemberInnerClass memberClass=new OuterClass1().new MemberInnerClass();<br>
+				&nbsp;&nbsp;&nbsp;在内部类中访问外部类的成员变量：OuterClass1.this.a;<br>
+				&nbsp;&nbsp;&nbsp;外部类中创建内部类实例：this.new MemberInnerClass();<br>
+				(3)局部内部类：定义在方法中，而且只能在方法中使用;类似于局部变量，没有修饰符;只读，不能修改方法中的局部变量.<br>
+				(4)匿名内部类：局部内部类的一种特殊形式，<span>会隐式继承一个父类或实现一个接口。</span><p1>匿名内部类不能是抽象类，不能定义构造器</p1>
+			</li>
+			<li></li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C087">
+		<h3>087File类详解及使用陷阱深度剖析</h3>
+		<ol type="a">
+			<li>File类：描述文件本身的属性，包括对文件或者目录的操作，二者会有很好的区分；<span>不能读写内容</span>；适用于Linux，而且适用windows文件系统</li>
+			<li>使用File的<span>mkdir()</span>创建目录时，例如创建c:/test/hello/目标目录；那么<span>目标目录之前的文件层次必须存在!</span><br>
+				而使用File的<span>mkdirs()</span>创建目录时，<span>目标层次不需要存在！逐级创建</span>
+			</li>
+			<li>FilenameFilter过滤文件：String[] java.io.File.list(FilenameFilter filter)</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C089">
+		<h3>089Java IO流深入详解</h3>
+		<ol type="a">
+			<li><span>输入、输出都是针对文件而言的</span></li>
+			<li>1.流操作中涉及的a.write(b)和a.writeTo(b)方向相反;而read不是，谁调用read()就读取谁的内容<br>
+				(1)<span>a.write(b)</span>代表将 b写到a;<br>
+				(2)<span>a.writeTo(b)</span>代表将 a写到b;<br>
+				2.涉及a.read(byte[] b, int off, int len):代表将a的内容拷贝到b;off指的是<span>b的偏移量</span>;
+			</li>
+			<li>字节流的输入输出流的基础是:InputStream和OutputStream<span>抽象类</span><br>
+				&nbsp;&nbsp;&nbsp;&nbsp;8位二进制字节
+			</li>
+			<li>字符流的输入输出流的基础是:Reader和Writer<span>抽象类</span>;底层实现形式仍然是字节流，对字节流进行了包装，所以更有效。<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;16位二进制字符
+			</li>
+			<li>输入流：读数据的逻辑<br>
+				(1)打开流;<br>
+				(2)while循环读取信息;<br>
+				(3)关闭流.<br>
+			</li>
+			<li>输出流：写数据的逻辑<br>
+				(1)打开流;<br>
+				(2)while循环写入信息;<br>
+				(3)关闭流.<br>
+			</li>
+			<li>输入方向：节点流（如磁盘上的文件）---->过滤流---->过滤流…………--->read()到Java程序<br>
+				输出方向：节点流（如磁盘上的文件）&lt;----过滤流&lt;----过滤流…………&lt;---read()到Java程序<br>
+			</li>
+			<li>1Byte=8bits;一个字母占1字节，一个汉字占2字节</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C091">
+		<h3>091 节点流、过滤流深入详解</h3>
+		<ol type="a">
+			<li>
+			  <table border="1" style="white-space:nowrap pre-wrap;">
+			  	<caption style="font-size:24px;font-style:bold;margin-bottom:15px; background-color:#887777;color:#fff888">DataOutputStream dos=new DataOutputStream(new BufferedOutputStream(new FileOutputStream("D:data.txt")));</caption>
+				<thead>
+					<th><span>接口</span></th>
+					<th>
+						<span>节点流<br>(InputStream的实现类)</span><br>
+						<span style="color:green">具体构建角色</span>
+					</th>
+					<th><span style="color:blue;font-size:24px">多级包装情形</span></th>
+					<th>
+						<span>过滤流(将信息转换成二进制数据)<br>(FilterInputStream的子类)</span><br>
+						<span style="color:green">具体装饰角色</span>
+					</th>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span>InputStream</span><br><span style="color:green">抽象构建角色</span></td>
+						<td>
+							<p>FileInputStream</p>
+							<p>ByteArrayInputStream</p>
+							<p><span>FilterInputStream</span><br><span style="color:green">装饰角色</span></p>
+							<p>ObjectInputStream</p> 
+							<p>PipedInputStream</p>
+							<p>SequenceInputStream</p>
+							<p>StringBufferInputStream</p>
+						</td>
+						<td style="color:blue;text-align:center">&lt;======BufferedInputStream======><br>作为连接节点流和其它过滤流的缓冲</td>
+						<td>
+							<p>DataInputStream:<br>
+								<ol>
+									<li>读写操作<span>基本数据类型</span>,而<span>不是</span>简单地字符！！一般记事本打开是乱码！</li>
+									<li>读写顺序要一致，否则会出现错误（会出现字节胡乱拆分拼接的情况）</li>
+									<li>经过DataInputStream处理后变成二进制数据，可移植</li>
+								</ol>
+							</p>
+							<p>BufferedInputStream:<br>
+								<ol>
+									<li>不能和文件直接打交道，而是必须通过对Input~/OutputStream等节点流进行<span>包装（可多级包装）</span>；也是所有过滤流的特性；</li>
+									<li>不直接写入磁盘文件，而是在内存的缓冲区暂不输出，如果flush()清空缓存或者close()则输出；</li>
+									<li>close()其实调用了flush()；</li>
+								</ol>
+							</p>
+							<p>LineNumberInputStream<br></p>
+							<p>PushbackInputStream<br></p>
+						</td>
+					</tr>
+				</tbody>
+			  </table>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C093">
+		<h3>093装饰模式深入详解</h3>
+		<ol type="a">
+			<li>装饰模式：在不增加类的数量的情况下，<span>动态</span>的创建装饰对象来扩展被装饰对象功能（通过对象的任意组合或者说包装来实现）；类似继承（<span>静态</span>），但是不同于继承。</li>
+			<li>装饰模式的角色：<br>
+				(1)抽象构建角色：抽象<span>接口</span>，例如InputStream;<br>
+				(2)具体构建角色：装饰功能的载体类，<span>实现（1）接口</span>，例如节点流FileInputStream;<br>
+				(3)装饰角色：<span>持有一个（1）对象的引用</span>，而且<span>实现（1）接口</span>；例如FilterInputStream；<br>
+				(4)具体装饰角色：给构建对象添加装饰功能，<span>继承（3）</span>。
+			</li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C094">
+		<h3>094Java字符流详解</h3>
+		<ol type="a">
+			<li>字节流的作用？由于汉字等其他语言的加入，ASCII不能满足需要，所以Java不是基于ASCII,而是基于Unicode，而字节流不能直接操作Unicode字符，所以出现字符流。</li>
+			<li>1个Unicode字符=2个Byte=16bits，所以显然不能用字节流来读写，比如一个汉字是2个字节，但是以字节流读取一个字节一定是乱码的（所以字节流操作要经常进行字节和字符串的互换才可以准确输出信息）。</li>
+			<li>
+			  <table border="1" style="white-space:nowrap pre-wrap;">
+			  	<caption style="font-size:24px;font-style:bold;margin-bottom:15px; background-color:#887777;color:#fff888">
+			  	</caption>
+				<thead>
+					<th><span>接口</span></th>
+					<th>
+						<span>节点流<br>(Reader的实现类)</span><br>
+						<span style="color:green">具体构建角色</span>
+					</th>
+					<th><span style="color:blue;font-size:24px">重要补充</span></th>
+					<th>
+						<span>过滤流<br></span><br>
+						<span style="color:green">具体装饰角色</span>
+					</th>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span>Reader</span><br><span style="color:green">抽象构建角色</span></td>
+						<td>
+							<p style="background-color: #B8860B">BufferedReader<br>BufferedWriter<br><span style="color:green">装饰角色</span></p>
+							<p>CharArrayReader<br>CharArrayWriter<br></p>
+							<p style="background-color: #E9967A"><span>FilterReader<br>FilterWriter<br></span><span style="color:green">装饰角色</span></p>
+							<p style="background-color:#7B68EE">InputStreamReader<br>OutputStreamWriter<br><span style="color:green">装饰角色</span></p> 
+							<p style="clear:both">PipedReader<br>PipedWriter<br></p>
+							<p>StringReader<br>StringWriter<br></p>
+							<p  style="background-color: #BA55D3">PrintWriter</p>
+						</td>
+						<td style="color:blue;width:40%">
+							<p>InputStreamReader和OutputStreamWriter用来在字节流和字符流之间搭一座“桥”</p>
+							<p>&nbsp;&nbsp;&nbsp;&nbsp;(1)InputStreamReader：（原始数据是字符）字节转换为字符；初始是什么，转换后也是什么，否则会出现乱码</p>
+							<p>&nbsp;&nbsp;&nbsp;&nbsp;(2)OutputStreamWriter：（原始数据是字节）将字符以字节的形式输出；同上。</p>
+						</td>
+						<td>
+							<p><span style="background-color: #B8860B;color:white">LineNumberReader:继承自BufferedReader<br></span>
+							</p>
+							<p><span style="background-color: #E9967A ;color:white ">PushbackReader:继承自FilterReader<br></span>
+							</p>
+							<p><span style="background-color: #7B68EE ;color:white"> FileReader:继承自InputStreamReader<br>FileWriter:继承自OutputStreamWriter<br></span></p>
+						</td>
+					</tr>
+				</tbody>
+			  </table>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C095">
+		<h3>095Java字符流详解 续</h3>
+		<ol type="a">
+			<li>字符集的编码？
+				<ol>
+					<li><span>ASCII</span>：0的ASC值是48；a是97；A是65；通用的字节编码系统</li>
+					<li><span>GB2312</span>：1中文字符=2字节的数字表示；<span>为了和ASCII区分，中文字符每个字节的最高位都置1.</span></li>
+					<li><span>GBK</span>：国标扩展不常用汉字和符号</li>
+					<li><span>ISO-8859-1</span>：英文字符编码集</li>
+					<li><span>Unicode</span>：通用字符集，支持中英文；都用2个字节，英文前面加“0”字节，如：ASCII为0x61，Unicode为0x00,0x61（在网络上传输效率低）</li>
+					<li><span>UTF-8</span>：通用字符集，支持中英文；不等长，效率高；1汉字=3字节</li>
+				</ol>
+			</li>
+			<li>RandomAccessFile：继承自Object，实现了DataInput和DataOutput接口（当然也能实现DataInputStream和DataOutputStream），既能读又能写。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C096">
+		<h3>096对象序列化与反序列化深入详解</h3>
+		<ol type="a">
+			<li>序列化：把<span>对象</span>的状态存入字节流：<br>
+				(1)当对象被序列化时，只序列化对象的类名以及非静态成员变量（静态的属于类，不属于某个对象）；不能序列化任何成员方法、静态的成员变量（即类变量）、transient实例变量；<br>
+				(2)成员变量如果是对象，也会被保存；<br>
+				(3)如果可序列化对象包含不可序列化对象的引用，整个序列化会失败；但是可以将这个引用标记为<span>transient（该关键字表示变量不会被序列化），引用不会被序列化，但是该对象可以被序列化</span><br>
+			</li>
+			<li><span>简言之：static和transient不能被序列化,但是加上final就可以被序列化。尽量使用transient阻止序列化，不要使用static,效果可以达到，但是用法不对</span></li>
+			<li>如果修改类的方法或者类变量或者transient，反序列化不会收到影响，类定义无需修改serialVersionUID(因为方法不会被序列化)<br>
+				如果修改了非瞬态的实例变量类型，可能导致序列化版本不兼容。如果是数量发生变化，可以兼容，新的类中字段多，则为null或者0，如果少被忽略。
+			</li>
+			<li>反序列化需要对应的class文件</li>
+			<li>按序序列化必须按序反序列化</li>
+			<li>当一个可序列化类有多个父类时（直接或间接父类），要么父类有无参构造器或者是可序列化的，否则会抛出异常</li>
+			<li>如果父类不可序列化，只是带有无参构造器，那么父类的成员变量不会序列化</li>
+			<li>java不通过构造函数实现序列化,反序列化时不会调用该对象的构造器，但是会调用父类的构造器，如果父类没有默认构造器会报错</li>
+			<li>
+				<span>(a)</span>ObjectOutput/ObjectInput接口：继承自DataOutput/DataInput;<br>
+				<span>(b)</span>ObjectOutputStream/ObjectInputStream：继承自OutputStream/InputStream；实现(a)接口；<br>
+				<span>(c)</span>(b)对应的方法：writeObject()/readObject()，后者需向下类型转化，而且这两个方法可以由用户自己精确定义，如果没有在所<span>涉及的Object中</span>精确定义，则使用默认的调用处理方式；
+			</li>
+			<li>当我们在一个待序列化/反序列化的类中实现了一下两个private 方法（方法声明必须与下面保持一致），那么就允许我们以更加底层、更加细粒度的方式控制序列化和反序列化过程。<br>
+				<pre>
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+		System.out.println("自定义 writeObject");
+		out.writeInt(age);
+		out.writeUTF(name);
+		out.writeDouble(height);
+	}
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+		System.out.println("自定义 readObject");
+		in.readInt();
+		in.readUTF();
+		in.readDouble();
+	}				
+				</pre>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C098">
+		<h3>098线程的实现方式</h3>
+		<ol type="a">
+			<li><span>要想让对象以线程方式运行，只能通过调用start()方法，直接调用run()只是一个普通的类，并不是线程。</span></li>
+			<li>线程不能重复启动（即人不能进同样的水里2次）</li>
+			<li>必须用start()方法启动线程，start为线程的执行准备好资源，然后调用run()；将我们希望执行的代码都放在run()方法</li>
+			<li>对于单核CPU，某一时刻只能有一个线程在执行（微观串行），宏观角度，多个线程同时执行（宏观并行）<br>
+				对于>=2的CPU可以做到微观并行；
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C099">
+		<h3>099Thread类源代码深度剖析</h3>
+		<ol type="a">
+			<li>Thread类也实现了Runnable接口，因此实现了该接口中的run()方法。</li>
+			<li>Thread类维护一个静态成员变量Thread-number，每创建一个线程，+1</li>
+			<li>Thread维护了一个Runnable的引用，所以构造函数new Thread(Runnable run)</li>
+			<li>当使用Thread类生成线程对象时，需要重写run()，因为Thread类的run()什么也不做；<br>
+				使用Runnable接口生成线程对象时，需要实现Runnable接口的run()，然后使用new Thread(new MyThread()); MyThread implements Runnable<br>
+				<span>所以，当一个线程已经继承了另一个类时，需要使用第二种方法来构造。</span>
+			</li>
+			<li>线程的停止：让run()执行停止，不要用stop()方法！<br>
+				<span>推荐线程停止方法：</span><br>
+				<ol>
+					<li>为run()方法中的执行代码块加上执行标记：</li>
+					<li>
+						<pre>
+	public class Mythread implements Runnable{
+		private boolean flag=true;
+		public void run(){ while(flag){.....} }
+		public void stopRunning(){ this.flag=false; }
+	}
+	public class ControlThread{
+		private Runnable r=new Mythread();
+		private Thread t=new Thread(r);
+		
+		public void startThread(){ t.start(); }
+		public void stopThread(){ t.stopRunning(); }
+	}
+						</pre>
+					</li>
+				</ol>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C100">
+		<h3>100线程同步问题深度解析</h3>
+		<ol type="a">
+			<li>生命周期：<br>
+				(1)创建：new <br>
+				(2)可运行(Runnable)：start()->分配资源->run()<br>
+				(2->3)运行(Running)：抢占CPU<br>
+				(3->2)不可运行：
+				<pre>
+		+sleep(long millis)时间结束；<br>
+		+wait()，另一对象notify()或者notifyAll()；<br>
+		+io阻塞，io完成；<br>
+				</pre>
+				(4)消亡：run()结束或者run()抛异常
+			</li>
+			<li>优先级设置（并不完全由优先级决定执行顺序，可以通过操作系统进行合理调度）：<br>
+				<ol>
+					<li>子继承父</li>
+					<li>setPriority(1~10)</li>
+					<li>常量：MIN_PRIORITY=1；MAX_PRIORITY=10；NORM_PRIORITY=5</li>
+				</ol>
+			</li>
+			<li>调度策略：<br>
+				<ol>
+					<li>yield()让出对CPU占用权，static方法，用得少</li>
+					<li>sleep()，static方法，用的多</li>
+					<li>io阻塞</li>
+					<li>更高优先级线程到来</li>
+					<li>分时系统中时间片用完</li>
+				</ol>
+			</li>
+			<li>关于成员变量与局部变量：<br>
+				(1)如果一个变量是成员变量，那么多个线程对同一个对象的成员变量进行操作时，他们对该成员变量是彼此影响的（<span>即一个线程对成员变量的改变会影响到另一个线程</span>）<br>
+				(2)如果一个变量是局部变量，那么每个线程都会有一个该局部变量的拷贝，一个线程对该局部变量的改变不会影响到其他的线程。<br>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C101">
+		<h3>101synchronized关键字深入详解</h3>
+		<ol type="a">
+			<li><h1 style="font-size:4em;color:green;font-weight:15px;">下面这句话：important!</h1></li>
+			<li>Java中的每个对象都有一个锁（lock）或者叫做监视器（monitor）。当访问某个对象的synchronized方法时，<span>表示将该对象上锁</span>，
+				此时其他任何线程都无法再去访问该对象的任何synchronized方法，直到之前的那个线程执行方法完毕后（或者抛出了异常），
+				那么将该对象的锁释放掉，其他线程才有可能再去访问该synchronized方法。
+			</li>
+			<li><span>但是，如果是synchronized static 修饰，那么修饰的就不是对象，而是当前对象所对应的Class对象！(锁的范围更大)</span><br>
+				即如果某个synchronized方法是static的，那么当该线程访问该方法时，它锁的并不是synchronized方法所在的对象，而是synchronized方法所在的对象所对应的Class对象。<br>
+				因为JavaHongKong无论一个类有多少个对象，这些对象会对应唯一一个Class对象，因此当线程分别访问同一个类的两个static,synchronized方法时，他们的执行顺序也是顺序的，也就是说一个线程先去执行方法，执行完毕后另一个线程才开始执行。
+			</li>
+			<li>synchronized块，写法：<br>
+				<pre>
+		synchronized(object){   }
+		<span>表示线程在执行的时候会对object对象上锁，更加细粒度，可对一部分代码加锁</span>
+				</pre>
+			</li>
+			<li>synchronized方法是一种粗粒度的并发控制，某一时刻，只能有一个线程执行该synchronized方法；<br>
+			synchronized块则是一种细粒度的并发控制，只会将快中的代码同步，位于方法内、synchronized块之外的代码是可以被多个线程同时访问的。</li>
+			<li>synchronized方法或者synchronized块加锁的变量一般都是private比较好。</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C103">
+		<h3>103wait及notify方法全面、深度解读</h3>
+		<ol type="a">
+			<li>线程间的相互作用：<br>
+				(1)wait()：final的，<span>必须在synchronized块或者synchronized方法中调用，释放锁，sleep()是不会释放锁的。</span><br>
+				(2)notify()：final的，<span>同样必须在synchronized块或者synchronized方法中调用.</span><br>
+			</li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	<li id="C105">
+		<h3>105 对象的深克隆与浅克隆</h3>
+		<ol type="a">
+			<li>x.clone()!=x为真；x.clone().getClass()==x.getClass()为真；x.clone().equals(x)为真</li>
+			<li></li>
+			<li></li>
+		</ol>
+		<a href="https://www.baidu.com/">百度一下</a>
+	</li>
+	
+</ol>
+</body>
+</html>

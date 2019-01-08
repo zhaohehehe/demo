@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre {
+    margin: 0 0 16px;
+    padding: 5px 16px 4px 36px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+strong{
+	color:blue;
+}
+</style>
+</head>
+<body>
+	<div class='index'>
+		<ol>
+			<li><h3><a href="#FileInputStream"><cite>FileInputStream</cite></a></h3></li>
+			<li><h3><a href="#ByteArrayInputStream"><cite>ByteArrayInputStream</cite></a></h3></li>
+			<li><h3><a href="#PrintWriter/Reader"><cite>PrintWriter/Reader</cite></a></h3></li>
+			<li><h3><a href="#DataIn/Output"><cite>DataIn/Output</cite></a></h3></li>
+			<li><h3><a href="#FileWriter/Reader"><cite>FileWriter/Reader</cite></a></h3></li>
+			<li><h3><a href='#OutputStreamWriter/Reader'><cite>OutputStreamWriter/Reader</cite></a></h3></li>
+		</ol>
+	</div>
+	<div class="container">
+		<ol>
+			<li id='FileInputStream'>
+				<p>java.io.FileInputStream</p>
+				<ol>
+					<li><pre>InputStream is=new FileInputStream("D:/input.txt");</pre></li>
+					<li><pre>
+OutputStream out=new FileOutputStream(new File("D:/output.txt"),true);
+PrintStream p=new PrintStream(out);
+p.println(Object x);</pre></li>
+					<li><pre>
+<strong>在文件头部追加(即会清空文件内容),如果文件不存在会自动生成:</strong>
+OutputStream os1=new FileOutputStream("D:/output.txt");
+byte[] buffer="hello java".getBytes();
+os1.write(buffer);
+os1.close();
+<strong>在文件尾部追加，第二个参数为true:</strong>
+OutputStream os2=new FileOutputStream("D:/output.txt",true);
+byte[] bufferAppend="hello java".getBytes();
+os2.write(bufferAppend);
+os2.close();
+					</pre></li>
+				</ol>
+			</li>
+			<li id='ByteArrayInputStream'><p>java.io.ByteArrayInputStream</p>
+				<ol>
+					<li><pre>
+public static void main(String[] args) throws IOException {
+		byte[] buffer="abcdefg".getBytes();
+		//全部读取
+		//ByteArrayInputStream bais=new ByteArrayInputStream(buffer);
+		//部分读取
+		ByteArrayInputStream bais=new ByteArrayInputStream(buffer,0,4);
+		int c;
+		//字符a的ASCII为97，read()返回ASCII值
+		for(int i=0;i&lt;2;i++){
+			if(0==i){
+				while(-1!=(c=bais.read())){
+					System.out.println(c);
+					System.out.println((char)c);//输出的c的ASCLL值
+				}
+			}
+			else{
+				while(-1!=(c=bais.read())){
+					System.out.println("------------------------------");
+					System.out.println(Character.toUpperCase((char)c));
+					System.out.println(Character.toUpperCase(c));//输出的是c的大写字母的ASCLL值
+				}
+			}
+			bais.reset();//Resets the buffer to the marked position
+		}
+		bais.close();
+}					
+					</pre></li>	
+					<li><pre>
+ByteArrayOutputStream baos=new ByteArrayOutputStream();
+byte[] b="abcdefg".getBytes();
+baos.write(b);
+		
+byte[] result=baos.toByteArray();
+baos.close();
+for(int i=0;i&lt;result.length;i++){
+	System.out.println((char)result[i]);
+}
+<strong>从ByteArrayOutputStream写到文件中</strong>
+OutputStream os=new FileOutputStream("D:/output.txt",true);
+baos.writeTo(os);
+os.close();
+baos.close();					
+					</pre></li>				
+				</ol>
+			</li>
+			<li id='PrintWriter/Reader'><p>java.io.java.io.PrintWriter/Reader</p>
+				<ol>
+					<li><pre>
+public static void test() {
+		String str = "Hello 中国";
+		char[] chs = new char[str.length()];
+		str.getChars(0, str.length(), chs, 0);
+		CharArrayReader car = new CharArrayReader(chs, 2, 5);
+		int c;
+		try {
+			while (-1 != (c = car.read())) {
+				System.out.println((char) c);
+			}
+		} catch (IOException e) {
+			CharArrayWriter cw = new CharArrayWriter();
+			PrintWriter pw = new PrintWriter(cw, true);
+			e.printStackTrace(pw);
+			// char[] ca = cw.toCharArray();
+			String info = cw.toString();
+			Date time = new Date();
+			// 将time和info信息写入数据库---
+			System.out.println("出错时间: " + time);
+			System.out.println("错误信息:/n" + info);
+		}
+		car.close();
+}
+					</pre></li>	
+				</ol>
+			</li>
+			<li id='DataIn/Output'><p>java.io.java.io.DataIn/Output</p>
+				<ol>
+					<li><pre>
+public static void main(String[] args) throws Exception {
+		// 写入数据
+		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("D:/data.txt")));
+		byte b = 6;
+		short sh = 3;
+		int i = 12;
+		long l = 4L;
+		char c = 'd';
+		float f = 1.3f;
+		double d = 1.23;
+		boolean bo = true;
+
+		dos.writeByte(b);
+		dos.writeShort(sh);
+		dos.writeInt(i);
+		dos.writeLong(l);
+		dos.writeChar(c);
+		dos.writeFloat(f);
+		dos.writeDouble(d);
+		dos.writeBoolean(bo);
+
+		dos.close();
+		// 读取数据
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream("D:/data.txt")));
+		System.out.println(dis.readByte());
+		System.out.println(dis.readShort());
+		System.out.println(dis.readInt());
+		System.out.println(dis.readLong());
+		System.out.println(dis.readChar());
+		System.out.println(dis.readFloat());
+		System.out.println(dis.readDouble());
+		System.out.println(dis.readBoolean());
+
+		dis.close();
+
+}
+
+					</pre></li>	
+				</ol>
+			</li>
+			<li id='FileWriter/Reader'><p>java.io.FileWriter/Reader</p>
+				<ol>
+					<li><pre>
+public static void main(String[] args) throws IOException {
+		FileWriter fw = new FileWriter("D:/test.txt", true);
+		//BufferedWriter bw = new BufferedWriter(fw);
+		String s = "//测试FileWriter";
+		// 按字符写入
+		<strong style='color:red'>
+		char[] chs = new char[s.length()];
+		s.getChars(0, s.length(), chs, 0);
+		for (int i = 0; i < chs.length; i++) {
+			fw.write(chs[i]);
+		}
+		fw.close();
+		</strong>
+		FileReader fr = new FileReader("D:/test.txt");
+		BufferedReader br = new BufferedReader(fr);
+		String str = br.readLine();
+		while (null != str) {
+			System.out.println(str);
+			str = br.readLine();
+		}
+		br.close();
+		fr.close();
+}
+					</pre></li>	
+				</ol>
+			</li>
+			<li id='OutputStreamWriter/Reader'><p>java.io.OutputStreamWriter/Reader</p>
+				<ol>
+					<li><pre>
+BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/out.txt"))));
+BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream("D:/in.txt")));
+					</pre></li>	
+				</ol>
+			</li>
+			
+			
+			
+			
+		</ol>
+	</div>
+</body>
+</html>

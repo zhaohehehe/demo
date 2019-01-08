@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>RowSet使用</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">CachedRowSet</h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+					<li class="list-group-item">1.CachedRowSet 对象是一个数据行的容器，可在内存中缓存其各行，这使得进行操作时无需总是连接到数据源，减少数据库压力。</li>
+					<li class="list-group-item">2.此外，它还是一个 JavaBeansTM 组件，是可滚动、可更新、可序列化的；</li>
+					<li class="list-group-item">3.目前给出的参考实现只支持从ResultSet 对象中获取数据，开发人员可以扩展 SyncProvider 实现，以提供对其他表格（如电子表格）数据源的访问</li>
+					<li class="list-group-item">4.CachedRowSet对象是一个非连接 rowset，这意味着它只会短暂地连接其数据源。应用程序可以修改 CachedRowSet对象中的数据，这些修改随后可以被传播回数据源。</li>
+					<li class="list-group-item">5.连接数据源只发生在读取数据（用各行填充自身），以及将更改传播回其底层数据源时。其余时间 CachedRowSet对象是非连接的，包括修改它的数据时</li>
+					<li class="list-group-item">6.非连接使 RowSet 对象更为简洁，因此更容易传递给另一个组件。例如把在运行在服务器端的EJB组件查询结果通过net传递（可序列化）给web browser的客户端。这个是一个作用，另一个作用是包装ResultSet提供滚动的，可更新的结果集。</li>
+					<li class="list-group-item">7.例如，假定 CachedRowSet 对象的命令返回一个具有 1000 行数据的 ResultSet 对象 rs。如果页大小设置为 100，则首次调用方法 nextPage 将创建一个包含 rs 前 100 行的 CachedRowSet 对象。在使用这前 100 行的数据执行完所需的操作后，应用程序可以再次调用方法 nextPage 创建另一个带有 rs 第二个 100 行数据的 CachedRowSet 对象。第一个 CachedRowSet 对象中的数据不再存在于内存中，因为它已被第二个 CachedRowSet 对象的数据替换了。调用方法 nextPage 10 次后，第十个 CachedRowSet 对象将包含 rs 最后 100 行存储在内存中的数据。在任意给定时间，内存中仅存储一个 CachedRowSet 对象的数据。</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

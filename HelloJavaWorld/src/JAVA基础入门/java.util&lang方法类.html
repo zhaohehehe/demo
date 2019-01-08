@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre.prettyprint {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h3>java.util.Arrays</h3>
+		<ol>
+			<li>int java.util.Arrays.binarySearch(int[] a, int key)</li>
+			<li>int[] java.util.Arrays.copyOf(int[] original, int newLength)</li>
+			<li>int[] java.util.Arrays.copyOfRange(int[] original, int from, int to)</li>
+			<li>void java.util.Arrays.fill(int[] a, int val)</li>
+			<li>void java.util.Arrays.sort(int[] a):使用快速排序算法java.util.DualPivotQuicksort</li>
+		</ol>
+		<h3>java.lang.System</h3>
+		<ol>
+			<li>void java.lang.System.arraycopy(Object src, int srcPos, Object dest, int destPos, int length)</li>
+			<li>Map&lt;String, String> java.lang.System.getenv()</li>
+			<li>获取JVM变量并存入文件中:
+				<pre class='prettyprint'>
+Properties prop=System.getProperties();prop.store(new FileOutputStream("out.txt"), "存储JVM变量");
+				</pre>
+			</li>
+			<li>根据对象地址计算HashCode:int java.lang.System.identityHashCode(Object x)</li>
+		</ol>
+		<h3>java.util.Scanner</h3>
+		<ol>
+			<li>java.util.Scanner.Scanner(InputStream source)</li>
+		</ol>
+	</div>
+</body>
+</html>
