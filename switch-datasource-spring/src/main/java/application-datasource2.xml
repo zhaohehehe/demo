@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Spring 数据库相关配置 放在这里 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+         http://www.springframework.org/schema/context  
+                http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<!-- <context:component-scan base-package="zhaohe.study" /> -->
+
+	<!-- 引入属性文件 -->
+	<context:property-placeholder location="classpath:db.properties" />
+
+	<bean id="parentDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<!-- 其他配置 -->
+	</bean>
+
+	<bean id="dataSource1" parent="parentDataSource" init-method="init"
+		destroy-method="close">
+		<property name="url" value="${db1.url}" />
+		<property name="username" value="${db1.username}" />
+		<property name="password" value="${db1.password}" />
+	</bean>
+	<bean id="dataSource2" parent="parentDataSource" init-method="init"
+		destroy-method="close">
+		<property name="url" value="${db2.url}" />
+		<property name="username" value="${db2.username}" />
+		<property name="password" value="${db2.password}" />
+	</bean>
+
+
+	<!-- 配置多数据源映射关系 -->
+	<bean id="dataSource" class="zhaohe.study.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="dataSource1" value-ref="dataSource1"></entry>
+				<entry key="dataSource2" value-ref="dataSource2"></entry>
+			</map>
+		</property>
+		<!-- 默认目标数据源为主库数据源 -->
+		<property name="defaultTargetDataSource" ref="dataSource1" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!--注解方式管理事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!--切面的方式管理事务 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="NESTED"
+				rollback-for="Exception" />
+			<tx:method name="del*" propagation="NESTED" rollback-for="Exception" />
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="count*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="service"
+			expression="execution(* zhaohe.study.service..*.*(..))" />
+		<!-- 关键配置，切换数据源一定要比持久层代码更先执行（事务也算持久层代码） -->
+		<aop:aspect ref="txAdvice" order="2"></aop:aspect>
+		<aop:aspect ref="dataSourceExchange" order="1">
+			<aop:before pointcut-ref="service" method="intercept" />
+		</aop:aspect>
+	</aop:config>
+
+
+	<bean id="dataSourceExchange" class="zhaohe.study.datasource.aop.DataSourceAspect"></bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="testService" class="zhaohe.study.service.impl.TestServiceImpl">
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+
+</beans>
