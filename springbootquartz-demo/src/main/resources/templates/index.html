@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+<title>Insert title her</title>
+</head>
+<body>
+	<div>
+		<button id="test">首页</button>
+	</div>
+	<div>
+		<button id="addjob">添加job</button>
+	</div>
+	<div>
+		<button id="pausejob">暂停job</button>
+	</div>
+	<div>
+		<button id="resumejob">恢复job</button>
+	</div>
+	<div>
+		<button id="reschedulejob">重新调度job</button>
+	</div>
+	<div>
+		<button id="deletejob">删除job</button>
+	</div>
+	<div>
+		<button id="queryjob">查询job</button>
+	</div>
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#test").click(function() {
+			$.ajax({
+				url : "/",
+				type : "post",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#addjob").click(function() {
+			$.ajax({
+				url : "job/addjob",
+				type : "post",
+				data : {
+					"jobClassName" : "com.zhaohe.demo.quartz.job.MyJob",
+					"jobGroupName" : "1",
+					"cronExpression" : "0/5 * * * * ?"
+				},
+				//dataType:'json',
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#reschedulejob").click(function() {
+			$.ajax({
+				url : "job/reschedulejob",
+				type : "post",
+				data : {
+					"jobClassName" : "com.zhaohe.demo.quartz.job.MyJob",
+					"jobGroupName" : "1",
+					"cronExpression" : "0/30 * * * * ?"
+				},
+				//dataType:'json',
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#pausejob").click(function() {
+			$.ajax({
+				url : "job/pausejob",
+				type : "post",
+				data : {
+					"jobClassName" : "com.zhaohe.demo.quartz.job.MyJob",
+					"jobGroupName" : "1"
+				},
+				//dataType:'json',//返回数据类型
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#resumejob").click(function() {
+			$.ajax({
+				url : "job/resumejob",
+				type : "post",
+				data : {
+					"jobClassName" : "com.zhaohe.demo.quartz.job.MyJob",
+					"jobGroupName" : "1"
+				},
+				//dataType:'json',//返回数据类型
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#deletejob").click(function() {
+			$.ajax({
+				url : "job/deletejob",
+				type : "post",
+				data : {
+					"jobClassName" : "com.zhaohe.demo.quartz.job.MyJob",
+					"jobGroupName" : "1"
+				},
+				//dataType:'json',//返回数据类型
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+		$("#queryjob").click(function() {
+			$.ajax({
+				url : "job/queryjob",
+				type : "get",
+				data : {
+					"pageNum" : "1",
+					"pageSize" : "10"
+				},
+				//dataType:'json',//返回数据类型
+				//contentType: "application/json;charset=utf-8",
+				success : function() {
+					alert("success");
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus);
+					alert(errorThrown);
+				}
+			});
+		});
+	});
+</script>
+</html>
