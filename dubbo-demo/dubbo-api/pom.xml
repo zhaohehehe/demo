@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.zhaohe.demo</groupId>
+    <artifactId>dubbo-demo</artifactId>
+    <version>1.0.0</version>
+   	<relativePath>../../dubbo-demo</relativePath>
+   	<!-- relativePath 可以不用写，因为所有子模块根路径都在 dubbo-demo文件夹之内，如果在同级模块才有必要使用？-->
+  </parent>
+  <groupId>com.zhaohe.demo</groupId>
+  <artifactId>dubbo-api</artifactId>
+  <version>${api.version}</version>
+  <name>dubbo-api</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
