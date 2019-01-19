@@ -1,15 +1,50 @@
 package com.shengsiyuan.study.nio;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileLock;
 
 public class FileLockTest {
-	//¹²ÏíËø£ºÔÊĞí¶à¸ö½ø³Ì¶ÁÈ¡ÎÄ¼ş£¬µ«ÊÇ×èÖ¹ÆäËû½ø³Ì»ñµÃ¶Ô¸ÃÎÄ¼şµÄÅÅËüËø
-	//ÅÅËüËø£ºËø×¡ÎÄ¼şµÄ¶ÁĞ´
-	//lock()ºÍtryLock()¶¼ÊÇÅÅËüËø£»
-	//lock()ÊÇ×èÈûµÄ£¬tryLock()ÊÇ·Ç×èÈûµÄ
+	//å…±äº«é”ï¼šå…è®¸å¤šä¸ªè¿›ç¨‹è¯»å–æ–‡ä»¶ï¼Œä½†æ˜¯é˜»æ­¢å…¶ä»–è¿›ç¨‹è·å¾—å¯¹è¯¥æ–‡ä»¶çš„æ’å®ƒé”
+	//æ’å®ƒé”ï¼šé”ä½æ–‡ä»¶çš„è¯»å†™
+	//lock()å’ŒtryLock()éƒ½æ˜¯æ’å®ƒé”ï¼›
+	//lock()æ˜¯é˜»å¡çš„ï¼ŒtryLock()æ˜¯éé˜»å¡çš„
 	/**
-	 * ÎÄ¼şËøËäÈ»¿ÉÒÔÓÃÓÚ²¢·¢·ÃÎÊ£¬°´Ê±¶ÔÓÚ¸ß²¢·¢µÄÇéĞÎ£¬ÍÆ¼öÊ¹ÓÃÊı¾İ¿â±£´æ³ÌĞòĞÅÏ¢£¬¶ø²»ÊÇÊ¹ÓÃÎÄ¼ş
+	 * æ–‡ä»¶é”è™½ç„¶å¯ä»¥ç”¨äºå¹¶å‘è®¿é—®ï¼ŒæŒ‰æ—¶å¯¹äºé«˜å¹¶å‘çš„æƒ…å½¢ï¼Œæ¨èä½¿ç”¨æ•°æ®åº“ä¿å­˜ç¨‹åºä¿¡æ¯ï¼Œè€Œä¸æ˜¯ä½¿ç”¨æ–‡ä»¶
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		
-	}
+	
+	private static final String GEN_LCK_FILE = "genFile.lck";
+
+    private static FileLock genLock = null;
+
+    @SuppressWarnings("resource")
+	public static void main(String args[]) {
+        
+        try {
+            // Acquire an exclusive lock, assure manager is stand alone
+            genLock = new FileOutputStream(GEN_LCK_FILE).getChannel().tryLock();
+            System.out.println(new File(GEN_LCK_FILE).getAbsolutePath());
+
+            if (null != genLock) {
+                //open the file you want!
+            } else {
+                System.err.println("this file has been open but other person!");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != genLock) {
+                try {
+                    genLock.release();
+                    new File(GEN_LCK_FILE).delete();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
