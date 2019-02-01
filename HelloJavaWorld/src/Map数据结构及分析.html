@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<title>Map数据结构及分析</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">
+				<a href="http://www.cnblogs.com/qwangxiao/p/9018928.html">JAVA
+					Map 分析</a>
+			</h4>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">HashTable</h4>
+			<p>HashTable是同步的，能够保证线程安全，而且没有顺序</p>
+			<hr>
+			<p>但是所有方法都是synchronized，性能会有所下降</p>
+			<hr>
+			<p>不允许null作为key</p>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">HashMap</h4>
+			<p>
+				HashMap是异步的，不能保证线程安全，而且没有顺序,可以使用null作为key<a
+					href="http://coding-geek.com/how-does-a-hashmap-work-in-java/">底层实现原理</a>
+			</p>
+			<hr>
+			<p>不过可以通过Collections.synchronizedMap(map)方法将其改为线程安全的，不过依然是在map对象上添加synchronized关键字,性能也会有所下降。这种情况可以选择ConcurrentSkipListMap</p>
+			<hr>
+			<p>hash()以及rehash(){return (key == null) ? 0 : (h =
+				key.hashCode()) ^ (h >>> 16)}(jdk8新增)获得更好、更均匀的hash效果。 //这里其实就是取模运算X
+				% 2^n = X & (2^n –
+				1)，位运算(&)效率要比代替取模运算(%)高很多,主要原因是位运算直接对内存数据进行操作，不需要转成十进制，因此处理速度非常快。而且还有一个好处就是可以很好的解决负数的问题。
+				//rehash其实为了对key的hashCode进行扰动计算，防止不同hashCode的高位不同但低位相同导致的hash冲突。简单点说，就是为了把高位的特征和低位的特征组合起来，降低哈希冲突的概率。</p>
+			<hr>
+			<p>在jdk8之前，HashMap和其他基于map的类都是通过链地址法解决冲突，它们使用单向链表来存储相同索引值的元素。在最坏的情况下，这种方式会将HashMap的get方法的性能从O(1)降低到O(n)。
+				为了解决在频繁冲突时hashmap性能降低的问题，jdk8中使用平衡树来替代链表存储冲突的元素。这意味着我们可以将最坏情况下的性能从O(n)提高到O(logn)。</p>
+			<hr>
+			<p>jdk8底层将Entry换成Node,并且将"数组+链表"的实现方式改为"数组+链表+红黑树"(如果是普通Node，是链表形式存储；如果Node类型是TreeNode时，会以红黑树的形式存储)</p>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">LinkedHashMap</h4>
+			<p>
+			<pre> static class Entry&lt;K,V> extends HashMap.Node&lt;K,V> {
+        Entry&lt;K,V> before, after;
+        Entry(int hash, K key, V value, Node&lt;K,V> next) {
+            super(hash, key, value, next);
+        }
+    }
+    /**
+     * The head (eldest) of the doubly linked list.
+     */
+    transient LinkedHashMap.Entry&lt;K,V> head;
+    /**
+     * The tail (youngest) of the doubly linked list.
+     */
+    transient LinkedHashMap.Entry&lt;K,V> tail;</pre>
+			</p>
+			<hr>
+			<p>LinkedHashMap并没有重写任何put方法。但是其重写了构建新节点的newNode()方法。
+				newNode()会在HashMap的putVal()方法里被调用，putVal()方法会在批量插入数据putMapEntries(Map
+				&lt;? extends K, ? extends V> m, boolean evict)或者插入单个数据public V
+				put(K key, V value)时被调用。
+				LinkedHashMap重写了newNode(),在每次构建新节点时，通过linkNodeLast(p);将新节点链接在内部双向链表的尾部
+			</p>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">TreeMap</h4>
+			<p>TreeMap是异步的，不能保证线程安全，通过红黑树实现key的排序</p>
+			<hr>
+			<p>
+				<a href="https://www.cnblogs.com/skywang12345/p/3310928.html">TreeMap原理详解</a>,TreeMap本质上是一棵<a
+					href="http://www.cnblogs.com/skywang12345/p/3245399.html">红黑树</a>
+			</p>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">ConcurrentHashMap</h4>
+			<p>ConcurrentHashMap(jdk1.5)是同步的，能够保证线程安全，而且没有顺序</p>
+			<hr>
+			<p>HashMap或者HashTable的线程安全是通过在进行读写操作时对整个map加锁来实现的，锁粒度比较大，性能比较低。ConcurrentHashMap采取了“锁分段”技术来细化锁的粒度，一个segment相当于一个小的hashtable。</p>
+			<hr>
+			<p>ConcurrentHashMap(1.7)的hash值的计算和位置计算和HashMap一样，都是通过位运算代替取模，然后再对hashcode进行扰动。区别在于，ConcurrentHashMap
+				使用了一种变种的Wang/Jenkins 哈希算法，其主要目的也是为了把高位和低位组合在一起，避免发生冲突</p>
+			<hr>
+			<p>1.8中ConcurrentHashMap将hash()方法改为spread()</p>
+			<hr>
+			<p>ConcurrentHashMap线程安全并且提高性能原因就在于：并发读写是分离的。对map中的读是并发的，无需加锁；只有在put、remove操作时才加锁，而加锁仅是对需要操作的segment加锁，不会影响其他segment的读写，由此，不同的segment之间可以并发使用，极大地提高了性能。</p>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">ConcurrentSkipListMap</h4>
+			<p>
+				如果我们需要保证线程安全并且有序，那么可以使用ConcurrentSkipListMap。使用<a
+					href="https://kenby.iteye.com/blog/1187303">跳表的数据结构</a>
+			</p>
+			<hr>
+			<p>
+			<pre> static final class Node&lt;K,V> {
+    	final K key;
+    	volatile Object value;
+    	volatile Node&lt;K ,V> next;
+    }
+    private transient volatile HeadIndex&lt;K,V> head;
+    static class Index&lt;K,V> {
+        final Node&lt;K,V> node;
+        final Index&lt;K,V> down;
+        volatile Index&lt;K,V> right;
+    }
+    static final class HeadIndex&lt;K,V> extends Index&lt;K,V> {
+        final int level;
+        HeadIndex(Node&lt;K,V> node, Index&lt;K,V> down, Index&lt;K,V> right, int level) {
+            super(node, down, right);
+            this.level = level;
+        }
+    }
+			
+			</pre>
+			</p>
+		</div>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
