@@ -127,6 +127,15 @@
 			
 			</pre>
 			</p>
+			<p>如果需要对Map的键值进行排序时:</p>
+			<ol>
+				<li>在非多线程的情况下，应当尽量使用TreeMap。</li>
+				<li>对于并发性相对较低的并行程序可以使用Collections.synchronizedSortedMap将TreeMap进行包装，也可以提供较好的效率</li>
+				<li>对于高并发程序，应当使用ConcurrentSkipListMap，能够提供更高的并发度。<br>
+				ConcurrentSkipListMap 的存取时间是log（N），和线程数几乎无关。也就是说在数据量一定的情况下，并发的线程越多，ConcurrentSkipListMap越能体现出优势。</li>
+			</ol>
+			
+			
 		</div>
 	</div>
 	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
