@@ -7,18 +7,22 @@
 	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <!-- 提供方应用信息，用于计算依赖关系 -->
-    <dubbo:application name="consumer" owner="yingjun"/>
+    <dubbo:application name="consumer" owner="zh"/>
 
     <!-- 使用zookeeper注册中心暴露服务地址 -->
     <!--zookeeper集群（本地伪集群）  -->
     <!-- <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181?backup=127.0.0.1:2182,127.0.0.1:2183"/> -->
 	<dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181"/>
+	
+	<dubbo:consumer group="MainProxy" check="false" timeout="60000" retries="0"/>
 
     <!-- 用户服务接口 -->
     <!-- retries表示失败后的重试次数，timeout表示超时时间，actives表示客户端并发限制数 服务端并发控制可用executes参数 -->
     <dubbo:reference id="userService" interface="com.test.dubbox.api.UserService">
         <dubbo:method name="getUserByPhone"  retries="2" timeout="5000" ></dubbo:method>
         <dubbo:method name="getUserByName"   actives="10" ></dubbo:method>
+    </dubbo:reference>
+    <dubbo:reference id="registerService" interface="com.test.dubbox.api.RegisterService">
     </dubbo:reference>
 
 

@@ -6,36 +6,57 @@
 	   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	   http://code.alibabatech.com/schema/dubbo
 	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<!--<dubbo:registry/> 注册中心配置： 配置类：com.alibaba.dubbo.config.RegistryConfig 
+		说明：如果有多个不同的注册中心，可以声明多个<dubbo:registry>标签，并在<dubbo:service>或<dubbo:reference>的registry属性指定使用的注册中心。 -->
+	<!--<dubbo:provider/>服务提供者缺省值配置： 配置类：com.alibaba.dubbo.config.ProviderConfig 
+		说明：该标签为<dubbo:service>和<dubbo:protocol>标签的缺省值设置。 -->
+	<!-- <dubbo:consumer/>服务消费者缺省值配置： 配置类：com.alibaba.dubbo.config.ConsumerConfig 
+		说明：该标签为<dubbo:reference>标签的缺省值设置。 -->
+	<!-- <dubbo:method/><dubbo:argument/><dubbo:parameter/> -->
+
+
+
 
     <!-- 扫描Service-->
     <context:component-scan base-package="com.test.dubbox.services" />
 
     <!-- 提供方应用信息，用于计算依赖关系 -->
-    <dubbo:application name="provider" owner="yingjun"/>
+    <dubbo:application name="provider" owner="zh"/>
 
     <!-- 使用zookeeper注册中心暴露服务地址 -->
     <!--zookeeper集群（本地伪集群）  -->
     <!-- <dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181?backup=127.0.0.1:2182,127.0.0.1:2183" /> -->
 	<dubbo:registry protocol="zookeeper" address="zookeeper://127.0.0.1:2181" />
-    <!-- 这个采用推荐的dubbo协议(tcp传输协议)（底层通过netty实现）（默认采用Hessian序列化方式）在20990端口暴露服务 -->
-  	<!--  <dubbo:protocol name="dubbo" port="20990"  /> --> 
-   	<dubbo:protocol name="dubbo" port="20880"  />
-    <!--dubbox中引入Kryo和FST这两种高效Java序列化实现，来逐步取代原生dubbo中的hessian2,如果使用kryo记得添加依赖 -->
-    <!--  <dubbo:protocol name="dubbo" serialization="kryo"  port="20990"  /> -->
+   	
+    <!-- dubbox中引入Kryo和FST这两种高效Java序列化实现，来逐步取代原生dubbo中的hessian2,如果使用kryo记得添加依赖 -->
+    <!-- <dubbo:protocol name="dubbo" serialization="kryo"  port="20880"  /> -->
+    
+    <!-- 这个采用推荐的dubbo协议(tcp传输协议)（底层通过netty实现）（默认采用Hessian序列化方式）在20880端口暴露服务 -->
+   <!-- 	<dubbo:protocol name="dubbo" port="20880"  /> -->
+   	
     <!-- 采用dubbox提供的REST风格服务（基于resteasy）(server可以选jetty tomcat(推荐) netty)，注意在相应的服务上加上注解以及相应依赖的引入-->
-    <!--rest服务默认都是采用http长连接来访问，如果想切换为短连接，配置keepalive="false"-->
-    <!-- dobbo 2.5.7报错，使用2.8.4 -->
-    <!-- <dubbo:protocol name="rest" port="8080"  server="tomcat" /> -->
+    <!-- rest服务默认都是采用http长连接来访问，如果想切换为短连接，配置keepalive="false"-->
+    <!-- 自2.6.0版本后可用 -->
+    <dubbo:protocol name="rest" port="8080"  server="tomcat" />
 
     <!-- timeout远程服务调用超时时间(毫秒) -->
     <!-- threads该服务线程池大小 -->
-    <!-- accepts限制服务器端接受的连接不能超过10个 -->
-    <!-- 随机token令牌，使用UUID生成 ，防止消费者绕过注册中心访问提供者-->
-    <dubbo:provider timeout="5000" threadpool="fixed"  threads="100" accepts="1000" token="true"/>
+    <!-- accepts限制服务器端接受的连接不能超过1000个 -->
+    <!-- 随机token令牌 ，防止消费者绕过注册中心访问提供者 :
+    	<p>如果设置token="false",不验证</p>
+    	<p>如果设置token="true",使用UUID生</p>
+    	<p>如果设置token="12345"</p>
+    	Dubbo服务端可以通过设置Dubbo Filter来进行token验证,这里只是进行dubbo基础的学习，跳过了token验证。
+    -->
+    <!-- DUBBO对每个接口都支持分组(group属性)和版本号(version属性,当一个接口的实现，出现不兼容升级时，可以用版本号过渡)实现环境隔离，然后服务消费方指定调用哪个分组或者哪个版本号就可以调用对应的接口 。但是实际上的group是用来区分某个接口的不同实现的。-->
+    <!-- group='*'表示任意一个group的服务 -->
+    <dubbo:provider group="MainProxy" timeout="5000" threadpool="fixed"  threads="100" accepts="1000" token="false"/>
 
     <!-- 暴露服务接口 一个服务可以用多个协议暴露，一个服务也可以注册到多个注册中心-->
-    <!--Provider上尽量多配置Consumer端的属性，让Provider实现者一开始就思考Provider服务特点、服务质量的问题-->
-    <dubbo:service interface="com.test.dubbox.api.UserService" ref="userService" />
+    <!-- Provider上尽量多配置Consumer端的属性，让Provider实现者一开始就思考Provider服务特点、服务质量的问题-->
+    <!-- ref指的是实际的ServiceImpl实现类，当前代码中是使用@Service注解指定的 -->
+    <dubbo:service interface="com.test.dubbox.api.UserService" ref="userService"/>
+    <dubbo:service interface="com.test.dubbox.api.RegisterService" ref="registerService"/>
 
 
 </beans>
