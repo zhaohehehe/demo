@@ -1,4 +1,4 @@
-package com.bonc.dataplatform.bdi.monitor.threadpool;
+package **;
 
 enum State {
 	SUCCESS {
