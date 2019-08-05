@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+	<bean id="MyTestBean1" class="zhaohe.study.config.TestBean"></bean>
+	<bean id="MyTestBean2" class="zhaohe.study.config.TestBean"></bean>
+	<bean class="zhaohe.study.config.SpringContextUtil"></bean>
+	
+	<bean id="MyPropertyPlaceholderConfigurer"
+		class="zhaohe.study.config.MyPropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<!-- 使用xml配置可以使用正则表达式，如果@Bean配置，需要自己定义过滤条件指定配置文件路径 -->
+				<value>classpath:/config/test/*.properties</value>
+				<value>classpath:/config/*.properties</value>
+			</list>
+		</property>
+		<property name="fileEncoding" value="utf-8" />
+	</bean>
+
+</beans>
