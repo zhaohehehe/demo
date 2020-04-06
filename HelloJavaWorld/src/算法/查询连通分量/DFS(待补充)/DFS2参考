@@ -1,0 +1,50 @@
+public class Connect{
+    //对②图建立邻接表，即建立每一个结点和它相连的所有结点的HashMap表
+    HashMap<Integer,List<Integer>> roots=new HashMap<>();
+    public void init(){//初始化数据
+        roots.put(1,Arrays.asList(2,3,4));
+        roots.put(2,Arrays.asList(1,5));
+        roots.put(3,Arrays.asList(1));
+        roots.put(4,Arrays.asList(1));
+        roots.put(5,Arrays.asList(2));
+        roots.put(7,Arrays.asList(8));
+        roots.put(8,Arrays.asList(7));
+    }
+    public static void main(String[] args){
+        Connect connect=new Connect();
+        connect.init();
+        int count=connect.dfs();
+        System.out.println(count);
+    }
+    HashMap<Integer,Boolean> status=new HashMap<>(); //记录每个结点是否被访问
+    public int dfs(){
+ 		int count=0;	//记录调用DFS的次数
+        Set<Integer> set=roots.keySet();//所有结点的集合
+        for(int key:set){
+            if(!status.containsKey(key)){
+            	count++;//每调用一次就加1
+                DFS(key);
+        	}
+        }
+        return count;
+    }
+    Stack<Integer> stack=new Stack<>();
+    //一个结点的话栈可以定义在方法外边，多个结点都要判断是否连通的时候Stack就得定义在方法里面
+    //这是因为对下一个结点进行判断的时候，如果栈定义在外边则上一个结点遍历遗留的数据还可能存在在栈内
+    public void DFS(int startPoint){
+        stack.push(startPoint);
+        status.put(startPoint,true);
+        if(stack.empty()){
+            return;
+        }
+        int vertax=stack.pop();
+        List<Integer> list=roots.get(vertax);
+        for(int point:list){
+            if(!status.getOrDefault(point,false)){
+                stack.push(point);
+                status.put(point,true);
+                DFS(point);
+            }
+        }
+    }
+}
