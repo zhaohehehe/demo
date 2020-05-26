@@ -74,6 +74,15 @@ public class AdjacencyListGraph {
 		vertexes[fromVex].setOutHead(arcNode);
 	}
 
+	private void createReverseAdjacencyArc(int fromVex, int toVex) {
+		// 头插法创建逆邻接表
+		ArcNode arcNode = new ArcNode();
+		arcNode.setAdjVex(fromVex);
+		arcNode.setNextArc(vertexes[toVex].getInHead());
+		vertexes[toVex].setInHead(arcNode);
+	}
+
+
 	@SuppressWarnings("unused")
 	private void createReverseAdjacencyArc(int fromVex, int toVex) {
 		// create reverse adjacency list
