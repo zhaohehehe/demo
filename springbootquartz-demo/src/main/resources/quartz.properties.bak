@@ -27,8 +27,8 @@ org.quartz.jobStore.class = org.quartz.impl.jdbcjobstore.JobStoreTX
 org.quartz.jobStore.tablePrefix = qrtz_
 org.quartz.jobStore.dataSource = qzDS
 org.quartz.dataSource.qzDS.driver = com.mysql.jdbc.Driver
-org.quartz.dataSource.qzDS.URL = jdbc:mysql://172.16.11.13:3306/zhtest?useUnicode=true&characterEncoding=utf8&useSSL=true
-org.quartz.dataSource.qzDS.user = root
-org.quartz.dataSource.qzDS.password = 123456
+org.quartz.dataSource.qzDS.URL = jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=true
+org.quartz.dataSource.qzDS.user = 
+org.quartz.dataSource.qzDS.password = 
 org.quartz.dataSource.qzDS.maxConnections = 10
 
