@@ -9,6 +9,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.KeyMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -18,6 +20,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.zhaohe.demo.quartz.job.YourJob;
+import com.zhaohe.demo.quartz.listener.MyTriggerListener;
 
 /**
  * 使用quartz提供的方法实现定时任务
@@ -44,6 +47,8 @@ public class DefaultRunJobIfAppStart1 implements ApplicationRunner {
 			JobDetail job = newJob(YourJob.class).withIdentity("udfJobName1", "udfJobGroup1").build();
 			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("udfTriggerName1", "udfTriggerGroup1").startNow()
 					.withSchedule(CronScheduleBuilder.cronSchedule(cronExpress)).build();
+			KeyMatcher<TriggerKey> tkeyMatcher = KeyMatcher.keyEquals(trigger.getKey());
+			scheduler.getListenerManager().addTriggerListener(new MyTriggerListener(), tkeyMatcher);
 			scheduler.scheduleJob(job, trigger);
 		} catch (IOException e) {
 			e.printStackTrace();
