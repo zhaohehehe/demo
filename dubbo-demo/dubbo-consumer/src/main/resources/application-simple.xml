@@ -1,0 +1,33 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	   http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<dubbo:application name="consumer" owner="zh">
+		<dubbo:parameter key="qos.enable" value="false" />
+	</dubbo:application>
+	<dubbo:registry address="127.0.0.1:8080"
+		group="simple" version="5.0" />
+	<dubbo:consumer timeout="60000" retries="0"
+		version="5.0" group="simple" />
+	<dubbo:protocol name="dubbo" port="8080" />
+
+	<dubbo:reference
+		interface="com.alibaba.dubbo.registry.RegistryService"></dubbo:reference>
+
+
+	<dubbo:reference id="userService" version="5.0"
+		group="simple" interface="com.test.dubbox.api.UserService">
+		<dubbo:method name="getUserByPhone" retries="2"
+			timeout="5000"></dubbo:method>
+		<dubbo:method name="getUserByName" actives="10"></dubbo:method>
+	</dubbo:reference>
+	<dubbo:reference id="registerService" version="5.0"
+		group="simple" interface="com.test.dubbox.api.RegisterService">
+	</dubbo:reference>
+
+
+</beans>

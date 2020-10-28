@@ -28,7 +28,6 @@ public class RegisterServiceImpl implements RegisterService {
 	 */
 	@GET
 	@Path("/register/{id}")
-	@Override
 	public User register(@BeanParam User user) {
 		return user;
 	}

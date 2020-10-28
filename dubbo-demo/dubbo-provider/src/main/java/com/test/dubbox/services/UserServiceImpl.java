@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService {
 
 	@GET
 	@Path("/getUserById/{name}/")
-	@Override
 	public User getUserById(@PathParam("name") Long id) {
 		User user = new User(id, "ById", "18888888888");
 		return user;
